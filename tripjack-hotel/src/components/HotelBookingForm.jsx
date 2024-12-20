@@ -14,57 +14,101 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
+import debounce from "lodash/debounce";
 
 const HotelBookingForm = () => {
   const [rating, setRating] = useState("");
   const [nationality, setNationality] = useState("India");
   const [country, setCountry] = useState("India");
   const [specialCategory, setSpecialCategory] = useState(false);
-  const [locations, setLocations] = useState([]); // For storing API results
-  const [loading, setLoading] = useState(false); // Loader state for location API
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [noResults, setNoResults] = useState(false);
+  const [searching, setSearching] = useState(true); // To track if the search should continue or not
 
-  
+  let currentPage = 0;
+
   const fetchLocations = async (inputValue, next = "") => {
-  setLoading(true);
-  try {
-    const endpoint = `https://tripjack.com/hms/v1/static-cities/${next}`;
-    const response = await axios.get(endpoint, {
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172",
-      },
-    });
+    console.log("Fetching locations with input value:", inputValue); // Log input value
 
-    // Check if response.data and response.data.response are defined
-    const { cil = [], next: nextPage = null } = response.data?.response || {};
+    setLoading(true);
+    setNoResults(false);
 
-    // Enhanced filtering logic: Check if any word in fullRegionName includes the input value
-    let filteredLocations = cil.filter((location) => {
-      const words = location.fullRegionName.toLowerCase().split(/\s+/); // Split into words
-      return words.some((word) => word.includes(inputValue.toLowerCase()));
-    });
+    try {
+      // Construct the API endpoint
+      const endpoint = `https://tripjack.com/hms/v1/static-cities/${next}`;
+      console.log("API endpoint:", endpoint); // Log the endpoint being hit
 
-    if (filteredLocations.length === 0 && nextPage) {
-      // If no matches found, fetch the next page
-      return fetchLocations(inputValue, nextPage);
+      const response = await axios.get(endpoint, {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172",
+        },
+      });
+
+      const { cil = [], next: nextPage = null } = response.data?.response || {};
+      console.log("API Response:", response.data); // Log full response data
+
+      // Filter locations based on the user's input
+      const filteredLocations = cil.filter((location) =>
+        location.fullRegionName.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+      console.log("Filtered Locations:", filteredLocations); // Log filtered locations
+
+      // Remove duplicates by using a Set on the id
+      setLocations((prev) => {
+        const uniqueLocations = [
+          ...new Map(prev.concat(filteredLocations).map((item) => [item.id, item])).values(),
+        ];
+        console.log("Unique Locations after filtering duplicates:", uniqueLocations);
+        return uniqueLocations;
+      });
+
+      // If no locations are found and there are more pages, fetch the next page
+      if (filteredLocations.length === 0 && nextPage) {
+        console.log("No locations found, fetching next page:", nextPage); // Log if no results found
+        return fetchLocations(inputValue, nextPage);
+      }
+
+      // Stop searching if no results found in the current page
+      if (filteredLocations.length === 0 && !nextPage) {
+        console.log("No results found, end of search"); // Log when no results are found
+        setNoResults(true);
+      }
+
+      // Continue fetching if there is a `nextPage`
+      if (nextPage) {
+        console.log("Fetching next page with ID:", nextPage); // Log next page ID
+        return fetchLocations(inputValue, nextPage);
+      }
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      setLocations([]);
+      setNoResults(true);
+    } finally {
+      console.log("Finished fetching locations"); // Log when done
+      setLoading(false);
     }
+  };
 
-    setLocations(filteredLocations);
-  } catch (error) {
-    console.error("Error fetching locations:", error);
-    setLocations([]); // Clear locations on error
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // Handle location input changes
-  const handleLocationInputChange = (event, value) => {
-    if (value.length > 2) {
+  const handleLocationInputChange = debounce((event, value) => {
+    console.log("Location input changed:", value); // Log input value
+    if (value.length > 2 && searching) {
+      currentPage = 0; // Reset page count for a new search
+      setLocations([]); // Clear previous locations
       fetchLocations(value);
     } else {
-      setLocations([]); // Clear locations if input is too short
+      setLocations([]);
+      setNoResults(false);
     }
+  }, 300);
+
+  // When the user selects a location, stop the search
+  const handleLocationSelect = (event, value) => {
+    console.log("User selected location:", value);
+    setSearching(false); // Stop searching after selection
+    // You can now handle the selection (e.g., set the location, etc.)
   };
 
   return (
@@ -100,11 +144,11 @@ const HotelBookingForm = () => {
             <Autocomplete
               freeSolo
               options={locations.map((location) => ({
-                label: `${location.cityName}, ${location.countryName},`,
+                label: location.fullRegionName,
                 id: location.id,
-                fullRegionName: location.fullRegionName,
               }))}
               onInputChange={handleLocationInputChange}
+              onChange={handleLocationSelect} // Handle selection
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -116,7 +160,9 @@ const HotelBookingForm = () => {
                     style: { color: "white" },
                     endAdornment: (
                       <>
-                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                        {loading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
                         {params.InputProps.endAdornment}
                       </>
                     ),
@@ -127,14 +173,19 @@ const HotelBookingForm = () => {
               renderOption={(props, option) => (
                 <Box {...props} key={option.id}>
                   <Typography variant="body1">{option.label}</Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {option.fullRegionName}
-                  </Typography>
                 </Box>
               )}
             />
+            {noResults && (
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ mt: 1, color: "white" }}
+              >
+                      
+              </Typography>
+            )}
           </Grid>
-
           {/* Check-in */}
           <Grid item xs={12} md={2}>
             <TextField
@@ -178,9 +229,15 @@ const HotelBookingForm = () => {
               inputProps={{ style: { color: "white" } }}
               sx={{ color: "white" }}
             >
-              <MenuItem value="1 Room 2 Adults 0 Child">1 Room 2 Adults 0 Child</MenuItem>
-              <MenuItem value="1 Room 1 Adult 0 Child">1 Room 1 Adult 0 Child</MenuItem>
-              <MenuItem value="2 Rooms 4 Adults 2 Children">2 Rooms 4 Adults 2 Children</MenuItem>
+              <MenuItem value="1 Room 2 Adults 0 Child">
+                1 Room 2 Adults 0 Child
+              </MenuItem>
+              <MenuItem value="1 Room 1 Adult 0 Child">
+                1 Room 1 Adult 0 Child
+              </MenuItem>
+              <MenuItem value="2 Rooms 4 Adults 2 Children">
+                2 Rooms 4 Adults 2 Children
+              </MenuItem>
             </Select>
           </Grid>
 
@@ -198,10 +255,12 @@ const HotelBookingForm = () => {
             >
               Search
             </Button>
+ 
+
           </Grid>
         </Grid>
 
-        {/* More Options */}
+        {/* Filters */}
         <Box
           mt={3}
           display="flex"
@@ -290,5 +349,3 @@ const HotelBookingForm = () => {
 };
 
 export default HotelBookingForm;
-
-
