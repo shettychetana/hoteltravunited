@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import {
   Container,
   TextField,
@@ -12,10 +12,14 @@ import {
   FormControlLabel,
   Autocomplete,
   CircularProgress,
+  IconButton,
+  Dialog,
+
 } from "@mui/material";
+
 import axios from "axios";
 import debounce from "lodash/debounce";
-
+import { Add, Remove } from "@mui/icons-material";
 const HotelBookingForm = () => {
   const [rating, setRating] = useState("");
   const [nationality, setNationality] = useState("India");
@@ -25,8 +29,189 @@ const HotelBookingForm = () => {
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
   const [searching, setSearching] = useState(true); // To track if the search should continue or not
-
+  const [selectedLocation, setSelectedLocation] = useState(null);
   let currentPage = 0;
+  const [rooms, setRooms] = useState([{ adults: 2, children: 0, childAges: [] }]);
+  const [summary, setSummary] = useState("Select Rooms & Persons");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [checkinDate, setCheckinDate] = useState(''); // Store checkin date from form
+  const [checkoutDate, setCheckoutDate] = useState(''); // Store checkout date from form
+  const [numberOfAdults, setNumberOfAdults] = useState(1); // Default number of adults
+  const [numberOfChildren, setNumberOfChildren] = useState(0); // Default number of children
+  const [childAge, setChildAge] = useState([]); // Array of child ages
+  const [ratings, setRatings] = useState([3, 4, 5]); // Default selected ratings
+  
+  const [error, setError] = useState(null); // Error message if API call fails
+  const [hotels, setHotels] = useState([]); 
+
+  const [searchIds, setSearchIds] = useState([]);
+  const [searchId, setSearchId] = useState(null);
+  const [hotelData, setHotelData] = useState(null);
+
+  const fetchHotels = async () => {
+    if (!selectedLocation || !checkinDate || !checkoutDate) {
+      setError("Please fill in all required fields");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    const requestBody = {
+      searchQuery: {
+        checkinDate: checkinDate, // Check-in date from the form
+        checkoutDate: checkoutDate, // Check-out date from the form
+        roomInfo: [
+          {
+            numberOfAdults: numberOfAdults, // Number of adults
+            numberOfChild: numberOfChildren, // Number of children
+            childAge: childAge, // Array of children's ages
+          },
+        ],
+        searchCriteria: {
+          city: selectedLocation, // Using selected city ID
+          nationality: "106", // Default nationality, can be dynamic
+          currency: "INR", // Currency, can be dynamic if needed
+        },
+        searchPreferences: {
+          ratings: ratings, // Ratings selected by the user
+          fsc: true, // FSC (filter for certain amenities)
+        },
+      },
+      sync: false, // Sync flag, set to false
+    };
+
+    try {
+      // API call 2  hotel search query list
+      const response = await axios.post(
+        'https://tripjack.com/hms/v1/hotel-searchquery-list',
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172", // API key
+          },
+        }
+      );
+
+      // Handle API response
+      console.log("Hotel Search Response:", response.data);
+      setHotels(response.data?.hotels || []); // Set the hotel data from response
+      setSearchIds(response.data?.searchIds || []);
+      console.log("Set Hotel Details:", hotels);
+      console.log("Stored Search IDs:", searchIds);
+      if (searchIds.length > 0) {
+        searchIds.forEach(async (searchId) => {
+          await fetchHotelSearch(searchId);
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching hotels:", err);
+      setError("Failed to fetch hotels. Please try again.");
+    } finally {
+      setLoading(false); // End loading state
+    }
+  };
+  useEffect(() => {
+    console.log("Updated Hotel Details:", hotels);
+  }, [hotels]);
+    
+    
+
+    //3api hotel search
+    const fetchHotelSearch = async (searchIds) => {
+      const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+      const url = 'https://tripjack.com/hms/v1/hotel-search';
+    
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json', // Optional, depends on the API
+            'Authorization': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172` // Confirm if "Bearer" is required
+          },
+          body: JSON.stringify({ searchIds })
+        });
+    
+        if (!response.ok) {
+          const errorDetails = await response.json();
+          throw new Error(errorDetails.message || 'Failed to fetch hotel data');
+        }
+    
+        const data = await response.json();
+        console.log('Hotel search results:', data);
+        setHotelData(data); // Ensure setHotelData is defined
+      } catch (error) {
+        setError(error.message); // Ensure setError is defined
+        console.error('Error fetching hotel data:', error);
+      }
+    };
+    
+
+  
+
+
+
+  const updateSummary = () => {
+    const totalRooms = rooms.length;
+    const totalAdults = rooms.reduce((sum, room) => sum + room.adults, 0);
+    const totalChildren = rooms.reduce((sum, room) => sum + room.children, 0);
+
+    setSummary(
+      `${totalRooms} Room${totalRooms > 1 ? "s" : ""} ${totalAdults} Adult${totalAdults > 1 ? "s" : ""} ${totalChildren} Child${totalChildren > 1 ? "ren" : ""}`
+    );
+    setDialogOpen(false);
+  };
+
+  const addRoom = () => {
+    setRooms([...rooms, { adults: 1, children: 0, childAges: [] }]);
+  };
+
+  const removeRoom = (index) => {
+    const updatedRooms = rooms.filter((_, i) => i !== index);
+    setRooms(updatedRooms);
+  };
+
+  const updateAdults = (index, value) => {
+    const updatedRooms = [...rooms];
+    updatedRooms[index].adults = Math.max(1, updatedRooms[index].adults + value);
+    setRooms(updatedRooms);
+  };
+
+  const updateChildren = (index, value) => {
+    const updatedRooms = [...rooms];
+    updatedRooms[index].children = Math.max(0, updatedRooms[index].children + value);
+
+    if (value > 0) {
+      updatedRooms[index].childAges.push(null); // Add a placeholder for child age
+    } else {
+      updatedRooms[index].childAges.pop(); // Remove the last child's age
+    }
+
+    setRooms(updatedRooms);
+  };
+
+  const updateChildAge = (roomIndex, childIndex, age) => {
+    const updatedRooms = [...rooms];
+    updatedRooms[roomIndex].childAges[childIndex] = age;
+    setRooms(updatedRooms);
+  };
+
+  const maxRooms = 5;
+  const calculateSummary = () => {
+    const totalRooms = rooms.length;
+    const totalAdults = rooms.reduce((sum, room) => sum + room.adults, 0);
+    const totalChildren = rooms.reduce((sum, room) => sum + room.children, 0);
+  
+    setSummary(`${totalRooms} Room${totalRooms > 1 ? "s" : ""} ${totalAdults} Adult${totalAdults > 1 ? "s" : ""} ${totalChildren} Child${totalChildren > 1 ? "ren" : ""}`);
+    setDialogOpen(false); // Close the dropdown after "Done"
+  };
+  
+
+
+  
+
+  
 
   const fetchLocations = async (inputValue, next = "") => {
     console.log("Fetching locations with input value:", inputValue); // Log input value
@@ -109,7 +294,9 @@ const HotelBookingForm = () => {
     console.log("User selected location:", value);
     setSearching(false); // Stop searching after selection
     // You can now handle the selection (e.g., set the location, etc.)
+    setSelectedLocation(value.id);
   };
+  
 
   return (
     <Box
@@ -192,6 +379,8 @@ const HotelBookingForm = () => {
               fullWidth
               type="date"
               label="Check in"
+              value={checkinDate}
+          onChange={(e) => setCheckinDate(e.target.value)}
               InputLabelProps={{ shrink: true, style: { color: "white" } }}
               InputProps={{ style: { color: "white" } }}
             />
@@ -203,6 +392,8 @@ const HotelBookingForm = () => {
               fullWidth
               type="date"
               label="Check out"
+              value={checkoutDate}
+              onChange={(e) => setCheckoutDate(e.target.value)}
               InputLabelProps={{ shrink: true, style: { color: "white" } }}
               InputProps={{ style: { color: "white" } }}
             />
@@ -220,25 +411,136 @@ const HotelBookingForm = () => {
             />
           </Grid>
 
+          
+
+
+
+
+
+
           {/* Persons & Rooms */}
           <Grid item xs={12} md={3}>
-            <Select
-              fullWidth
-              defaultValue="1 Room 2 Adults 0 Child"
-              displayEmpty
-              inputProps={{ style: { color: "white" } }}
-              sx={{ color: "white" }}
+          <Select
+        fullWidth
+        displayEmpty
+        value=""
+        inputProps={{ style: { color: "white" } }}
+        onClick={() => setDialogOpen(true)} // Open the dialog for room editing
+        sx={{ color: "white" }}
+      >
+        <MenuItem value="" disabled>
+          {summary}
+        </MenuItem>
+      </Select>
+
+      {/* Room Editing Dialog */}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <Box p={3}>
+          {rooms.map((room, roomIndex) => (
+            <Box
+              key={roomIndex}
+              sx={{
+                border: "1px solid lightgray",
+                borderRadius: 2,
+                padding: 2,
+                mb: 2,
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+              }}
             >
-              <MenuItem value="1 Room 2 Adults 0 Child">
-                1 Room 2 Adults 0 Child
-              </MenuItem>
-              <MenuItem value="1 Room 1 Adult 0 Child">
-                1 Room 1 Adult 0 Child
-              </MenuItem>
-              <MenuItem value="2 Rooms 4 Adults 2 Children">
-                2 Rooms 4 Adults 2 Children
-              </MenuItem>
-            </Select>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Room {roomIndex + 1}
+              </Typography>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={4}>
+                  <Typography>Adults</Typography>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      onClick={() => updateAdults(roomIndex, -1)}
+                    >
+                      <Remove />
+                    </IconButton>
+                    <Typography>{room.adults}</Typography>
+                    <IconButton
+                      onClick={() => updateAdults(roomIndex, 1)}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={4}>
+                  <Typography>Children</Typography>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      onClick={() => updateChildren(roomIndex, -1)}
+                    >
+                      <Remove />
+                    </IconButton>
+                    <Typography>{room.children}</Typography>
+                    <IconButton
+                      onClick={() => updateChildren(roomIndex, 1)}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={4}>
+                  {room.children > 0 && (
+                    <>
+                      <Typography>Child Ages</Typography>
+                      {room.childAges.map((age, childIndex) => (
+                        <Select
+                          key={childIndex}
+                          value={age || ""}
+                          onChange={(e) =>
+                            updateChildAge(roomIndex, childIndex, e.target.value)
+                          }
+                          sx={{ minWidth: 80 }}
+                        >
+                          {[...Array(18).keys()].map((age) => (
+                            <MenuItem key={age} value={age + 1}>
+                              {age + 1}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      ))}
+                    </>
+                  )}
+                </Grid>
+              </Grid>
+              {roomIndex > 0 && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{ mt: 2 }}
+                  onClick={() => removeRoom(roomIndex)}
+                >
+                  Remove Room
+                </Button>
+              )}
+            </Box>
+          ))}
+          {rooms.length < 5 && (
+            <Button variant="contained" onClick={addRoom} sx={{ mb: 2 }}>
+              Add Room
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={updateSummary}
+            fullWidth
+          >
+            Done
+          </Button>
+        </Box>
+      </Dialog>
           </Grid>
 
           {/* Search Button */}
@@ -251,7 +553,11 @@ const HotelBookingForm = () => {
                 "&:hover": { backgroundColor: "#e65c00" },
                 width: "100%",
                 height: "100%",
+                
               }}
+              onClick={fetchHotels}
+   
+
             >
               Search
             </Button>

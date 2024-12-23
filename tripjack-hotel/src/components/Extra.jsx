@@ -12,10 +12,13 @@
 //   FormControlLabel,
 //   Autocomplete,
 //   CircularProgress,
+//   IconButton,
+//   Dialog,
+
 // } from "@mui/material";
 // import axios from "axios";
 // import debounce from "lodash/debounce";
-
+// import { Add, Remove } from "@mui/icons-material";
 // const HotelBookingForm = () => {
 //   const [rating, setRating] = useState("");
 //   const [nationality, setNationality] = useState("India");
@@ -25,8 +28,72 @@
 //   const [loading, setLoading] = useState(false);
 //   const [noResults, setNoResults] = useState(false);
 //   const [searching, setSearching] = useState(true); // To track if the search should continue or not
-
+//   const [selectedLocation, setSelectedLocation] = useState(null);
 //   let currentPage = 0;
+//   const [rooms, setRooms] = useState([{ adults: 2, children: 0, childAges: [] }]);
+//   const [summary, setSummary] = useState("Select Rooms & Persons");
+//   const [dialogOpen, setDialogOpen] = useState(false);
+
+//   const updateSummary = () => {
+//     const totalRooms = rooms.length;
+//     const totalAdults = rooms.reduce((sum, room) => sum + room.adults, 0);
+//     const totalChildren = rooms.reduce((sum, room) => sum + room.children, 0);
+
+//     setSummary(
+//       `${totalRooms} Room${totalRooms > 1 ? "s" : ""} ${totalAdults} Adult${totalAdults > 1 ? "s" : ""} ${totalChildren} Child${totalChildren > 1 ? "ren" : ""}`
+//     );
+//     setDialogOpen(false);
+//   };
+
+//   const addRoom = () => {
+//     setRooms([...rooms, { adults: 1, children: 0, childAges: [] }]);
+//   };
+
+//   const removeRoom = (index) => {
+//     const updatedRooms = rooms.filter((_, i) => i !== index);
+//     setRooms(updatedRooms);
+//   };
+
+//   const updateAdults = (index, value) => {
+//     const updatedRooms = [...rooms];
+//     updatedRooms[index].adults = Math.max(1, updatedRooms[index].adults + value);
+//     setRooms(updatedRooms);
+//   };
+
+//   const updateChildren = (index, value) => {
+//     const updatedRooms = [...rooms];
+//     updatedRooms[index].children = Math.max(0, updatedRooms[index].children + value);
+
+//     if (value > 0) {
+//       updatedRooms[index].childAges.push(null); // Add a placeholder for child age
+//     } else {
+//       updatedRooms[index].childAges.pop(); // Remove the last child's age
+//     }
+
+//     setRooms(updatedRooms);
+//   };
+
+//   const updateChildAge = (roomIndex, childIndex, age) => {
+//     const updatedRooms = [...rooms];
+//     updatedRooms[roomIndex].childAges[childIndex] = age;
+//     setRooms(updatedRooms);
+//   };
+
+//   const maxRooms = 5;
+//   const calculateSummary = () => {
+//     const totalRooms = rooms.length;
+//     const totalAdults = rooms.reduce((sum, room) => sum + room.adults, 0);
+//     const totalChildren = rooms.reduce((sum, room) => sum + room.children, 0);
+  
+//     setSummary(`${totalRooms} Room${totalRooms > 1 ? "s" : ""} ${totalAdults} Adult${totalAdults > 1 ? "s" : ""} ${totalChildren} Child${totalChildren > 1 ? "ren" : ""}`);
+//     setDialogOpen(false); // Close the dropdown after "Done"
+//   };
+  
+
+
+  
+
+  
 
 //   const fetchLocations = async (inputValue, next = "") => {
 //     console.log("Fetching locations with input value:", inputValue); // Log input value
@@ -109,6 +176,7 @@
 //     console.log("User selected location:", value);
 //     setSearching(false); // Stop searching after selection
 //     // You can now handle the selection (e.g., set the location, etc.)
+//     setSelectedLocation(value);
 //   };
 
 //   return (
@@ -220,25 +288,136 @@
 //             />
 //           </Grid>
 
+          
+
+
+
+
+
+
 //           {/* Persons & Rooms */}
 //           <Grid item xs={12} md={3}>
-//             <Select
-//               fullWidth
-//               defaultValue="1 Room 2 Adults 0 Child"
-//               displayEmpty
-//               inputProps={{ style: { color: "white" } }}
-//               sx={{ color: "white" }}
+//           <Select
+//         fullWidth
+//         displayEmpty
+//         value=""
+//         inputProps={{ style: { color: "white" } }}
+//         onClick={() => setDialogOpen(true)} // Open the dialog for room editing
+//         sx={{ color: "white" }}
+//       >
+//         <MenuItem value="" disabled>
+//           {summary}
+//         </MenuItem>
+//       </Select>
+
+//       {/* Room Editing Dialog */}
+//       <Dialog
+//         open={dialogOpen}
+//         onClose={() => setDialogOpen(false)}
+//         fullWidth
+//         maxWidth="sm"
+//       >
+//         <Box p={3}>
+//           {rooms.map((room, roomIndex) => (
+//             <Box
+//               key={roomIndex}
+//               sx={{
+//                 border: "1px solid lightgray",
+//                 borderRadius: 2,
+//                 padding: 2,
+//                 mb: 2,
+//                 backgroundColor: "rgba(0, 0, 0, 0.05)",
+//               }}
 //             >
-//               <MenuItem value="1 Room 2 Adults 0 Child">
-//                 1 Room 2 Adults 0 Child
-//               </MenuItem>
-//               <MenuItem value="1 Room 1 Adult 0 Child">
-//                 1 Room 1 Adult 0 Child
-//               </MenuItem>
-//               <MenuItem value="2 Rooms 4 Adults 2 Children">
-//                 2 Rooms 4 Adults 2 Children
-//               </MenuItem>
-//             </Select>
+//               <Typography variant="h6" sx={{ mb: 1 }}>
+//                 Room {roomIndex + 1}
+//               </Typography>
+//               <Grid container spacing={2} alignItems="center">
+//                 <Grid item xs={4}>
+//                   <Typography>Adults</Typography>
+//                   <Box display="flex" alignItems="center">
+//                     <IconButton
+//                       onClick={() => updateAdults(roomIndex, -1)}
+//                     >
+//                       <Remove />
+//                     </IconButton>
+//                     <Typography>{room.adults}</Typography>
+//                     <IconButton
+//                       onClick={() => updateAdults(roomIndex, 1)}
+//                     >
+//                       <Add />
+//                     </IconButton>
+//                   </Box>
+//                 </Grid>
+
+//                 <Grid item xs={4}>
+//                   <Typography>Children</Typography>
+//                   <Box display="flex" alignItems="center">
+//                     <IconButton
+//                       onClick={() => updateChildren(roomIndex, -1)}
+//                     >
+//                       <Remove />
+//                     </IconButton>
+//                     <Typography>{room.children}</Typography>
+//                     <IconButton
+//                       onClick={() => updateChildren(roomIndex, 1)}
+//                     >
+//                       <Add />
+//                     </IconButton>
+//                   </Box>
+//                 </Grid>
+
+//                 <Grid item xs={4}>
+//                   {room.children > 0 && (
+//                     <>
+//                       <Typography>Child Ages</Typography>
+//                       {room.childAges.map((age, childIndex) => (
+//                         <Select
+//                           key={childIndex}
+//                           value={age || ""}
+//                           onChange={(e) =>
+//                             updateChildAge(roomIndex, childIndex, e.target.value)
+//                           }
+//                           sx={{ minWidth: 80 }}
+//                         >
+//                           {[...Array(18).keys()].map((age) => (
+//                             <MenuItem key={age} value={age + 1}>
+//                               {age + 1}
+//                             </MenuItem>
+//                           ))}
+//                         </Select>
+//                       ))}
+//                     </>
+//                   )}
+//                 </Grid>
+//               </Grid>
+//               {roomIndex > 0 && (
+//                 <Button
+//                   variant="outlined"
+//                   color="error"
+//                   sx={{ mt: 2 }}
+//                   onClick={() => removeRoom(roomIndex)}
+//                 >
+//                   Remove Room
+//                 </Button>
+//               )}
+//             </Box>
+//           ))}
+//           {rooms.length < 5 && (
+//             <Button variant="contained" onClick={addRoom} sx={{ mb: 2 }}>
+//               Add Room
+//             </Button>
+//           )}
+//           <Button
+//             variant="contained"
+//             color="primary"
+//             onClick={updateSummary}
+//             fullWidth
+//           >
+//             Done
+//           </Button>
+//         </Box>
+//       </Dialog>
 //           </Grid>
 
 //           {/* Search Button */}
