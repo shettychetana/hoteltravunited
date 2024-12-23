@@ -16,11 +16,12 @@ import {
   Dialog,
 
 } from "@mui/material";
-
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { Add, Remove } from "@mui/icons-material";
 const HotelBookingForm = () => {
+  const navigate = useNavigate();
   const [rating, setRating] = useState("");
   const [nationality, setNationality] = useState("India");
   const [country, setCountry] = useState("India");
@@ -45,80 +46,82 @@ const HotelBookingForm = () => {
   const [hotels, setHotels] = useState([]); 
 
   const [searchIds, setSearchIds] = useState([]);
-  const [searchId, setSearchId] = useState(null);
-  const [hotelData, setHotelData] = useState(null);
+  const [hotelData, setHotelData] = useState([]);
+
+  useEffect(() => {
+    console.log("Hotel Data Updated:", hotelData);
+  }, [hotelData]);
 
   const fetchHotels = async () => {
     if (!selectedLocation || !checkinDate || !checkoutDate) {
       setError("Please fill in all required fields");
       return;
     }
+  
     setLoading(true);
     setError(null);
-
+  
     const requestBody = {
       searchQuery: {
-        checkinDate: checkinDate, // Check-in date from the form
-        checkoutDate: checkoutDate, // Check-out date from the form
+        checkinDate,
+        checkoutDate,
         roomInfo: [
           {
-            numberOfAdults: numberOfAdults, // Number of adults
-            numberOfChild: numberOfChildren, // Number of children
-            childAge: childAge, // Array of children's ages
+            numberOfAdults,
+            numberOfChild: numberOfChildren,
+            childAge,
           },
         ],
         searchCriteria: {
-          city: selectedLocation, // Using selected city ID
-          nationality: "106", // Default nationality, can be dynamic
-          currency: "INR", // Currency, can be dynamic if needed
+          city: selectedLocation,
+          nationality: "106",
+          currency: "INR",
         },
         searchPreferences: {
-          ratings: ratings, // Ratings selected by the user
-          fsc: true, // FSC (filter for certain amenities)
+          ratings,
+          fsc: true,
         },
       },
-      sync: false, // Sync flag, set to false
+      sync: false,
     };
-
+  
     try {
-      // API call 2  hotel search query list
       const response = await axios.post(
         'https://tripjack.com/hms/v1/hotel-searchquery-list',
         requestBody,
         {
           headers: {
             "Content-Type": "application/json",
-            "apikey": "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172", // API key
+            "apikey": "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172",
           },
         }
       );
-
-      // Handle API response
-      console.log("Hotel Search Response:", response.data);
-      setHotels(response.data?.hotels || []); // Set the hotel data from response
-      setSearchIds(response.data?.searchIds || []);
-      console.log("Set Hotel Details:", hotels);
-      console.log("Stored Search IDs:", searchIds);
+  
+      const searchIds = response.data?.searchIds || [];
+      setSearchIds(searchIds); // Store search IDs
+      console.log("Search IDs Captured:", searchIds);
+  
+      // Call the second API for each searchId
       if (searchIds.length > 0) {
-        searchIds.forEach(async (searchId) => {
+        for (const searchId of searchIds) {
           await fetchHotelSearch(searchId);
-        });
+        }
+      } else {
+        console.log("No Search IDs returned.");
       }
-    } catch (err) {
-      console.error("Error fetching hotels:", err);
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
       setError("Failed to fetch hotels. Please try again.");
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    console.log("Updated Hotel Details:", hotels);
-  }, [hotels]);
+  
     
     
 
     //3api hotel search
-    const fetchHotelSearch = async (searchIds) => {
+    const fetchHotelSearch = async (searchId) => {
       const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
       const url = 'https://tripjack.com/hms/v1/hotel-search';
     
@@ -127,10 +130,10 @@ const HotelBookingForm = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json', // Optional, depends on the API
-            'Authorization': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172` // Confirm if "Bearer" is required
+            
+            'apikey': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172`, // Ensure format
           },
-          body: JSON.stringify({ searchIds })
+          body: JSON.stringify({ searchId }),
         });
     
         if (!response.ok) {
@@ -139,13 +142,20 @@ const HotelBookingForm = () => {
         }
     
         const data = await response.json();
-        console.log('Hotel search results:', data);
-        setHotelData(data); // Ensure setHotelData is defined
+        if (data) {
+  navigate('/resultpage', { state: { hotelData: data } });
+} else {
+  navigate('/resultpage', { state: { message: 'No data found' } });
+}
+    
+        // Append hotel data to the state
+        setHotelData((prevData) => [...prevData, data]);
       } catch (error) {
-        setError(error.message); // Ensure setError is defined
-        console.error('Error fetching hotel data:', error);
+        console.error(`Error fetching data for Search ID ${searchId}:`, error);
+        setError(`Failed to fetch data for Search ID ${searchId}`);
       }
     };
+    
     
 
   
@@ -545,25 +555,21 @@ const HotelBookingForm = () => {
 
           {/* Search Button */}
           <Grid item xs={12} md={1}>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#ff6600",
-                color: "white",
-                "&:hover": { backgroundColor: "#e65c00" },
-                width: "100%",
-                height: "100%",
-                
-              }}
-              onClick={fetchHotels}
-   
+  <Button
+    variant="contained"
+    sx={{
+      backgroundColor: "#ff6600",
+      color: "white",
+      "&:hover": { backgroundColor: "#e65c00" },
+      width: "100%",
+      height: "100%",
+    }}
+    onClick={fetchHotels} // Trigger first API and subsequent calls
+  >
+    Search
+  </Button>
+</Grid>
 
-            >
-              Search
-            </Button>
- 
-
-          </Grid>
         </Grid>
 
         {/* Filters */}
