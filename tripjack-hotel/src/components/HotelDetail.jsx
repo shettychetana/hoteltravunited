@@ -18,14 +18,64 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  IconButton,
   Paper as MuiPaper,
 } from '@mui/material';
-
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 const HotelDetail = () => {
   const location = useLocation();
   const { hotelDetail } = location.state || {};
+  console.log("hotelroom details",hotelDetail);
  const [value, setValue] = useState(0); // State to manage active tab
+ const [openModal, setOpenModal] = useState(false);
+ const [modalData, setModalData] = useState(null);
+ const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+const handleNext = () => {
+  setCurrentImageIndex((prevIndex) => (prevIndex + 1) % hotelDetail?.hotel?.img.length);
+};
+const standardImages = hotelDetail?.hotel?.img?.filter(image => image.sz === "Standard"
+);
+const handlePrev = () => {
+  setCurrentImageIndex((prevIndex) => (prevIndex - 1 + hotelDetail?.hotel?.img.length) % hotelDetail?.hotel?.img.length);
+};
+const navigateToReviewPage = (hotelId, roomId) => {
+  window.location.href = `/review/${hotelId}/${roomId}`;
+}
+// Carousel JSX
+<div style={{ position: 'relative' }}>
+  <img
+    src={hotelDetail?.hotel?.img[currentImageIndex]?.url}
+    alt="Room type"
+    style={{ width: '100%', height: 'auto', borderRadius: '8px' }} // Adjust styles as needed
+  />
+  <button onClick={handlePrev} style={{ position: 'absolute', left: '10px' }}>Prev</button>
+  <button onClick={handleNext} style={{ position: 'absolute', right: '10px' }}>Next</button>
+</div>
+ const handleOpenModal = (data) => {
+   setModalData(data);
+   setOpenModal(true);
+ };
+ 
+ const handleCloseModal = () => {
+   setOpenModal(false);
+ };
+//  const TabPanel = (props) => {
+//   const { children, value, index, ...other } = props;
+
+//   return (
+//     <div
+//       role="tabpanel"
+//       hidden={value !== index}
+//       id={`simple-tabpanel-${index}`}
+//       aria-labelledby={`simple-tab-${index}`}
+//       {...other}
+//     >
+//       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+//     </div>
+//   );
+// }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -345,19 +395,119 @@ const HotelDetail = () => {
                       </Table>
                     </TableContainer>
                   </div>
-                  <Typography variant="h6">Rooms</Typography>
-  {hotelDetail.hotel.ops[0].ris.length > 0 ? (
-    hotelDetail.hotel.ops[0].ris.map((room, index) => (
-      <Typography key={index} variant="body2" color="textSecondary">
-        Room Type: {room.rc || 'Room type unavailable'}
-      </Typography>
-    ))
-  ) : (
+                  <div>
+                  <Grid container spacing={2} style={{ marginTop: '16px' }}>
+  <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold',backgroundColor:"#ff7b39",color:"white",padding:"10px",borderRadius:"5px" }}>
+    <Typography variant="h6" >Room Type</Typography>
+    <Typography variant="h6">Room Options</Typography>
+    <Typography variant="h6" >Description</Typography>
+    <Typography variant="h6" >Cancellation Policy</Typography>
+    <Typography variant="h6" >Price</Typography>
+  </Grid>
+  {hotelDetail?.hotel?.ops?.map((roomType, index) => (
+    <Grid item xs={12} key={index} style={{ display: 'flex', justifyContent: 'space-between', border: '1px solid #ddd', borderRadius: '8px', padding: '16px', backgroundColor: '#fff' }}>
+      <div>
     <Typography variant="body2" color="textSecondary">
-      No room information available.
+      {roomType.ris[0]?.rc || 'Room Type Unavailable'}
+    </Typography>
+    <Grid item xs={12} md={8}>
+    <div style={{ position: 'relative', textAlign: 'center' }}>
+  {standardImages.length > 0 && (
+    <img
+      src={standardImages[currentImageIndex]?.url}
+      alt="Room type"
+      style={{ width: '200px', height: '150px', borderRadius: '8px' }} // Adjust styles as needed
+    />
+  )}
+  <IconButton onClick={handlePrev} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }}>
+    <ArrowBack />
+  </IconButton>
+  <IconButton onClick={handleNext} style={{ position: 'absolute', right: '0px', top: '50%', transform: 'translateY(-50%)' }}>
+    <ArrowForward />
+  </IconButton>
+</div>
+</Grid>
+  </div>
+      <Typography variant="body2" color="textSecondary">
+        {roomType.ris[0]?.mb || 'Meal Plan Unavailable'}
+      </Typography>
+      <ul style={{ paddingLeft: '20px',textDecoration:"none",listStyleType:"none" }}>
+  {roomType.ris[0]?.rexb?.BENEFIT?.[0]?.values?.map((benefit, index) => (
+    <li key={index}>
+      <Typography variant="body2" color="textSecondary">
+        {benefit}
+      </Typography>
+    </li>
+  )) || (
+    <Typography variant="body2" color="textSecondary">
+      No Description Available
     </Typography>
   )}
-                  </div>
+</ul>
+      <Typography variant="body2" color="textSecondary" onClick={() => handleOpenModal(roomType.cnp)}>
+  {roomType.cnp?.ifra === true ? 'Free Cancellation available' : 'Non-Refundable'}
+</Typography>
+
+
+<Dialog open={openModal} onClose={handleCloseModal}  >
+  <DialogTitle style={{backgroundColor:"#333333",color:"white", padding:"10px",borderRadius:"5px"}}> Cancellation Policy </DialogTitle>
+  <DialogContent>
+    {modalData && (
+      <div>
+       
+        <Typography variant="body2" >
+        Cancellation Policy
+        </Typography>
+        {modalData.pd.map((penalty, index) => (
+          <div>
+          
+          <Typography variant="body2" color="textSecondary">
+  Cancellation Charges of ₹{penalty.am} applicable if cancelled between  {penalty.fdt.split('T')[0]} {penalty.fdt.split('T')[1].slice(0, 5)} to {penalty.tdt.split('T')[0]} {penalty.tdt.split('T')[1].slice(0, 5)}.
+</Typography>
+
+
+          </div>
+          
+        ))}
+      </div>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseModal} color="primary">Close</Button>
+  </DialogActions>
+</Dialog>
+<div>
+<Typography variant="body2" color="textSecondary">
+        ₹{roomType.ris[0]?.tfcs?.TF?.toFixed(2) || 'N/A'}
+      </Typography>
+      <Button
+  variant="contained"
+  color="warning"
+  fullWidth
+  style={{
+    marginTop: '16px',
+    backgroundColor: '#ff6600',
+    color: 'white',
+  }}
+  onClick={() => navigateToReviewPage(hotelDetail?.hotel?.id, roomType.id)}
+>
+  BOOK THIS ROOM
+</Button>
+</div>
+      
+    </Grid>
+  ))}
+  {hotelDetail?.hotel?.ops?.length === 0 && (
+    <Grid item xs={12}>
+      <Typography variant="body2" color="textSecondary">
+        No room types available.
+      </Typography>
+    </Grid>
+  )}
+</Grid>
+                    </div>
+                 
+                     </div>
                   
                 )}
 
@@ -454,6 +604,7 @@ const HotelDetail = () => {
                 )}
               </div>
             </Box>
+            
     </div>
   );
 };
