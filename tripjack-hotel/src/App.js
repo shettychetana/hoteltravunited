@@ -38,6 +38,7 @@ import MostSearchedLocations from './components/MostSearchedLocations.jsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ResultsPage from './components/ResultsPage';
 import HotelDetail from './components/HotelDetail';
+import ReviewPage from './components/ReviewPage';
 function App() {
   return (
     <div className="App">
@@ -56,6 +57,7 @@ function App() {
           />
           <Route path="/resultpage" element={<ResultsPage />} />
           <Route path="/hotelDetail" element={<HotelDetail />} />
+          <Route path="/review/:hotelId/:roomId" element={<ReviewPage />} />
         </Routes>
       </Router>
     </div>

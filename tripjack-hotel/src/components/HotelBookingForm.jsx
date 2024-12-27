@@ -32,7 +32,7 @@ const HotelBookingForm = () => {
   const [searching, setSearching] = useState(true); // To track if the search should continue or not
   const [selectedLocation, setSelectedLocation] = useState(null);
   let currentPage = 0;
-  const [rooms, setRooms] = useState([{ adults: 2, children: 0, childAges: [] }]);
+  const [rooms, setRooms] = useState([{ adults: 1, children: 0, childAges: [] }]);
   const [summary, setSummary] = useState("Select Rooms & Persons");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checkinDate, setCheckinDate] = useState(''); // Store checkin date from form
@@ -57,7 +57,10 @@ const HotelBookingForm = () => {
       setError("Please fill in all required fields");
       return;
     }
-  
+    if (numberOfChildren > 0 && (!childAge || childAge.length !== numberOfChildren)) {
+      setError("Please provide the correct age for each child");
+      return;
+    }
     setLoading(true);
     setError(null);
   
@@ -186,26 +189,30 @@ const HotelBookingForm = () => {
     const updatedRooms = [...rooms];
     updatedRooms[index].adults = Math.max(1, updatedRooms[index].adults + value);
     setRooms(updatedRooms);
-  };
+    setNumberOfAdults(updatedRooms.reduce((sum, room) => sum + room.adults, 0)); // Update numberOfAdults
+};
 
-  const updateChildren = (index, value) => {
+const updateChildren = (index, value) => {
     const updatedRooms = [...rooms];
     updatedRooms[index].children = Math.max(0, updatedRooms[index].children + value);
 
     if (value > 0) {
-      updatedRooms[index].childAges.push(null); // Add a placeholder for child age
+        updatedRooms[index].childAges.push(null); // Add a placeholder for child age
     } else {
-      updatedRooms[index].childAges.pop(); // Remove the last child's age
+        updatedRooms[index].childAges.pop(); // Remove the last child's age
     }
 
     setRooms(updatedRooms);
-  };
+    setNumberOfChildren(updatedRooms.reduce((sum, room) => sum + room.children, 0)); // Update numberOfChildren
+};
 
-  const updateChildAge = (roomIndex, childIndex, age) => {
+// Update child age
+const updateChildAge = (roomIndex, childIndex, age) => {
     const updatedRooms = [...rooms];
     updatedRooms[roomIndex].childAges[childIndex] = age;
     setRooms(updatedRooms);
-  };
+    setChildAge(updatedRooms.flatMap(room => room.childAges)); // Update childAge with all ages
+};
 
   const maxRooms = 5;
   const calculateSummary = () => {

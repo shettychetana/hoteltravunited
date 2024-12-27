@@ -435,7 +435,7 @@ const Header = () => {
         </ListItemButton>
       </List>
       <Divider />
-      <Box sx={{ padding: "8px 16px" }}>
+      {/* <Box sx={{ padding: "8px 16px" }}>
         <Button color="inherit" fullWidth>
           Sign Up
         </Button>
@@ -447,7 +447,7 @@ const Header = () => {
         >
           Log In
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 
@@ -500,14 +500,14 @@ const Header = () => {
               </Button>
               <Button color="inherit">Contact</Button>
               <Button color="inherit">Help</Button>
-              <Button color="inherit">Sign Up</Button>
-              <Button
+              {/* <Button color="inherit">Sign Up</Button> */}
+              {/* <Button
                 variant="outlined"
                 color="inherit"
                 style={{ border: "1px solid white", borderRadius: "20px" }}
               >
                 Log In
-              </Button>
+              </Button> */}
             </Box>
           )}
 

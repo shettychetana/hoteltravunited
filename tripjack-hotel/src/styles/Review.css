@@ -1,0 +1,130 @@
+
+  .container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .left-section,
+  .right-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hotel-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .hotel-tag {
+    
+    color: #389e0d;
+    
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  .hotel-address {
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .booking-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+  }
+  
+  .room-details {
+    margin-top: 20px;
+  }
+  
+  .room-details ul {
+    padding-left: 20px;
+  }
+  
+  .non-refundable {
+    color: #e63946;
+    font-weight: bold;
+  }
+  
+  .policy-link {
+    color: #1e90ff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .important-info {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+  }
+  
+  .important-info ul {
+    padding-left: 20px;
+  }
+  
+  .price-breakup {
+    margin-bottom: 20px;
+  }
+  
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .total-price {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: bold;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+  
+  .coupon-section h3 {
+    margin-bottom: 10px;
+  }
+  
+  .coupon {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .apply-coupon {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .apply-coupon input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .apply-coupon button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .apply-coupon button:hover {
+    background-color: #0056b3;
+  }
+  

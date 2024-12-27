@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Grid,
   Paper,
@@ -24,6 +25,7 @@ import {
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 const HotelDetail = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { hotelDetail } = location.state || {};
   console.log("hotelroom details",hotelDetail);
@@ -40,9 +42,75 @@ const standardImages = hotelDetail?.hotel?.img?.filter(image => image.sz === "St
 const handlePrev = () => {
   setCurrentImageIndex((prevIndex) => (prevIndex - 1 + hotelDetail?.hotel?.img.length) % hotelDetail?.hotel?.img.length);
 };
-const navigateToReviewPage = (hotelId, roomId) => {
-  window.location.href = `/review/${hotelId}/${roomId}`;
-}
+// const navigateToReviewPage = async (hotelId, roomId) => {
+//   const apiUrl = `https://tripjack.com/hms/v1/hotel-review`;
+//   const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+  
+//   const body = {
+//     hotelId: hotelId,
+//     optionId: roomId
+//   };
+
+//   try {
+//     const response = await fetch(apiUrl, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'apikey': apiKey
+//       },
+//       body: JSON.stringify(body)
+//     });
+
+//     if (response.ok) {
+//       const data = await response.json();
+//       console.log(data); // Get the response data
+//       // Navigate to the review page and pass the response data
+//       //window.location.href = `/review`;
+//       window.location.href = `/review/${hotelId}/${roomId}`;
+//     } else {
+//       console.error('Failed to submit review:', response.statusText);
+//     }
+//   } catch (error) {
+//     console.error('Error during API call:', error);
+//   }
+// };
+
+
+const navigateToReviewPage = async (hotelId, roomId) => {
+  
+  const apiUrl = `https://tripjack.com/hms/v1/hotel-review`;
+  const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+
+  const body = {
+    hotelId: hotelId,
+    optionId: roomId
+  };
+
+ // Use navigate for programmatic navigation
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': apiKey
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); // Log response data
+      // Navigate to the review page and pass the data as state
+      navigate(`/review/${hotelId}/${roomId}`, { state: { data } });
+    } else {
+      console.error('Failed to submit review:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error during API call:', error);
+  }
+};
+
 // Carousel JSX
 <div style={{ position: 'relative' }}>
   <img
@@ -491,7 +559,7 @@ const navigateToReviewPage = (hotelId, roomId) => {
   }}
   onClick={() => navigateToReviewPage(hotelDetail?.hotel?.id, roomType.id)}
 >
-  BOOK THIS ROOM
+  BOOK ROOM
 </Button>
 </div>
       
