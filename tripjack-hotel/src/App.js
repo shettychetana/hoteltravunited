@@ -39,6 +39,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ResultsPage from './components/ResultsPage';
 import HotelDetail from './components/HotelDetail';
 import ReviewPage from './components/ReviewPage';
+import PopularPlaces from './components/PopularPlaces.jsx';
+import Testimonial from './components/Testimonial.jsx';
+import Footer from './components/Footer.jsx';
 function App() {
   return (
     <div className="App">
@@ -52,6 +55,9 @@ function App() {
               <>
                 <HotelBookingForm />
                 <MostSearchedLocations />
+                <PopularPlaces/>
+                <Testimonial/>
+
               </>
             }
           />
@@ -59,6 +65,10 @@ function App() {
           <Route path="/hotelDetail" element={<HotelDetail />} />
           <Route path="/review/:hotelId/:roomId" element={<ReviewPage />} />
         </Routes>
+        <Footer>
+        <Footer/>
+        </Footer>
+        
       </Router>
     </div>
   );

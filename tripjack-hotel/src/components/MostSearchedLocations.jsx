@@ -3,14 +3,14 @@ import { Box, Typography } from "@mui/material";
 
 const MostSearchedLocations = () => {
   const locations = [
-    { name: "Delhi", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Mumbai", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Chennai", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Bangalore", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Pune", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Hyderabad", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Ahmedabad", places: 325, image: "https://via.placeholder.com/150" },
-    { name: "Kolkata", places: 325, image: "https://via.placeholder.com/150" },
+    { name: "Delhi", places: 325, image: "../images/1.png" },
+    { name: "Mumbai", places: 325, image: "../images/2.png" },
+    { name: "Chennai", places: 325, image: "../images/3.png" },
+    { name: "Bangalore", places: 325, image: "../images/4.png" },
+    { name: "Pune", places: 325, image: "../images/5.png" },
+    { name: "Hyderabad", places: 325, image: "../images/6.png" },
+    { name: "Ahmedabad", places: 325, image: "../images/7.png" },
+    { name: "Kolkata", places: 325, image: "../images/8.png" },
   ];
 
   return (
