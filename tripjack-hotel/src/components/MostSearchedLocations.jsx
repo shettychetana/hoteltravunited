@@ -13,6 +13,7 @@ const MostSearchedLocations = () => {
     { name: "Kolkata", places: 325, image: "../images/8.png" },
   ];
 
+
   return (
     <Box sx={{ padding: 2 }}>
       <Typography

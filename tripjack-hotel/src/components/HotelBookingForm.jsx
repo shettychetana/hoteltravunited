@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { Add, Remove } from "@mui/icons-material";
+import { differenceInDays } from "date-fns";
 const HotelBookingForm = () => {
   const navigate = useNavigate();
   const [rating, setRating] = useState("");
@@ -47,7 +48,13 @@ const HotelBookingForm = () => {
 
   const [searchIds, setSearchIds] = useState([]);
   const [hotelData, setHotelData] = useState([]);
-
+  const calculateNights = () => {
+    if (!checkinDate || !checkoutDate) return 0;
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const start = new Date(checkinDate);
+    const end = new Date(checkoutDate);
+    return Math.round(Math.abs((start - end) / oneDay));
+  };
   useEffect(() => {
     console.log("Hotel Data Updated:", hotelData);
   }, [hotelData]);
@@ -421,7 +428,8 @@ const updateChildAge = (roomIndex, childIndex, age) => {
             <TextField
               fullWidth
               type="number"
-              label="Total Night(s)"
+              label="Total Night"
+              value={calculateNights()}
               placeholder="e.g., 2"
               InputProps={{ style: { color: "white" } }}
               InputLabelProps={{ style: { color: "white" } }}

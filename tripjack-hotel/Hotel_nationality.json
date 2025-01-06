@@ -1,0 +1,320 @@
+[
+  {
+    "countryname": "India",
+    "name": "India",
+    "dial_code": "91",
+    "countryid": "106",
+    "code": "IN",
+    "isocode": "IND"
+  },
+  {
+    "countryname": "Afghanistan",
+    "name": "Afghanistan",
+    "dial_code": "93",
+    "countryid": "97",
+    "code": "AF",
+    "isocode": "AFG"
+  },
+  {
+    "countryname": "Albania",
+    "name": "Albania",
+    "dial_code": "355",
+    "countryid": "43",
+    "code": "AL",
+    "isocode": "ALB"
+  },
+  {
+    "countryname": "Algeria",
+    "name": "Algeria",
+    "dial_code": "213",
+    "countryid": "142",
+    "code": "DZ",
+    "isocode": "DZA"
+  },
+  {
+    "countryname": "Andorra",
+    "name": "Andorra",
+    "dial_code": "376",
+    "countryid": "44",
+    "code": "AD",
+    "isocode": "AND"
+  },
+  {
+    "countryname": "Angola",
+    "name": "Angola",
+    "dial_code": "244",
+    "countryid": "143",
+    "code": "AO",
+    "isocode": "AGO"
+  },
+  {
+    "countryname": "Argentina",
+    "name": "Argentina",
+    "dial_code": "54",
+    "countryid": "29",
+    "code": "AR",
+    "isocode": "ARG"
+  },
+  {
+    "countryname": "Armenia",
+    "name": "Armenia",
+    "dial_code": "374",
+    "countryid": "45",
+    "code": "AM",
+    "isocode": "ARM"
+  },
+  {
+    "countryname": "Aruba",
+    "name": "Aruba",
+    "dial_code": "297",
+    "countryid": "231",
+    "code": "AW",
+    "isocode": "ABW"
+  },
+  {
+    "countryname": "Australia",
+    "name": "Australia",
+    "dial_code": "61",
+    "countryid": "196",
+    "code": "AU",
+    "isocode": "AUS"
+  },
+  {
+    "countryname": "Austria",
+    "name": "Austria",
+    "dial_code": "43",
+    "countryid": "46",
+    "code": "AT",
+    "isocode": "AUT"
+  },
+  {
+    "countryname": "Azerbaijan",
+    "name": "Azerbaijan",
+    "dial_code": "994",
+    "countryid": "47",
+    "code": "AZ",
+    "isocode": "AZE"
+  },
+  {
+    "countryname": "Bahamas",
+    "name": "Bahamas",
+    "dial_code": "1242",
+    "countryid": "3",
+    "code": "BS",
+    "isocode": "BHS"
+  },
+  {
+    "countryname": "Bahrain",
+    "name": "Bahrain",
+    "dial_code": "973",
+    "countryid": "98",
+    "code": "BH",
+    "isocode": "BHR"
+  },
+  {
+    "countryname": "Bangladesh",
+    "name": "Bangladesh",
+    "dial_code": "880",
+    "countryid": "99",
+    "code": "BD",
+    "isocode": "BGD"
+  },
+  {
+    "countryname": "Barbados",
+    "name": "Barbados",
+    "dial_code": "1246",
+    "countryid": "4",
+    "code": "BB",
+    "isocode": "BRB"
+  },
+  {
+    "countryname": "Belarus",
+    "name": "Belarus",
+    "dial_code": "375",
+    "countryid": "48",
+    "code": "BY",
+    "isocode": "BLR"
+  },
+  {
+    "countryname": "Belgium",
+    "name": "Belgium",
+    "dial_code": "32",
+    "countryid": "49",
+    "code": "BE",
+    "isocode": "BEL"
+  },
+  {
+    "countryname": "Belize",
+    "name": "Belize",
+    "dial_code": "501",
+    "countryid": "5",
+    "code": "BZ",
+    "isocode": "BLZ"
+  },
+  {
+    "countryname": "Benin",
+    "name": "Benin",
+    "dial_code": "229",
+    "countryid": "144",
+    "code": "BJ",
+    "isocode": "BEN"
+  },
+  {
+    "countryname": "Bermuda",
+    "name": "Bermuda",
+    "dial_code": "1441",
+    "countryid": "6",
+    "code": "BM",
+    "isocode": "BMU"
+  },
+  {
+    "countryname": "Bhutan",
+    "name": "Bhutan",
+    "dial_code": "975",
+    "countryid": "100",
+    "code": "BT",
+    "isocode": "BTN"
+  },
+  {
+    "countryname": "Bolivia",
+    "name": "Bolivia",
+    "dial_code": "591",
+    "countryid": "30",
+    "code": "BO",
+    "isocode": "BOL"
+  },
+  {
+    "countryname": "Bosnia and Herzegovina",
+    "name": "Bosnia and Herzegovina",
+    "dial_code": "387",
+    "countryid": "50",
+    "code": "BA",
+    "isocode": "BIH"
+  },
+  {
+    "countryname": "Botswana",
+    "name": "Botswana",
+    "dial_code": "267",
+    "countryid": "145",
+    "code": "BW",
+    "isocode": "BWA"
+  },
+  {
+    "countryname": "Brazil",
+    "name": "Brazil",
+    "dial_code": "55",
+    "countryid": "31",
+    "code": "BR",
+    "isocode": "BRA"
+  },
+  {
+    "countryname": "British Virgin Islands",
+    "name": "British Virgin Islands",
+    "dial_code": "1284",
+    "countryid": "7",
+    "code": "VG",
+    "isocode": "VGB"
+  },
+  {
+    "countryname": "Brunei",
+    "name": "Brunei",
+    "dial_code": "673",
+    "countryid": "101",
+    "code": "BN",
+    "isocode": "BRN"
+  },
+  {
+    "countryname": "Bulgaria",
+    "name": "Bulgaria",
+    "dial_code": "359",
+    "countryid": "51",
+    "code": "BG",
+    "isocode": "BGR"
+  },
+  {
+    "countryname": "Burkina Faso",
+    "name": "Burkina Faso",
+    "dial_code": "226",
+    "countryid": "146",
+    "code": "BF",
+    "isocode": "BFA"
+  },
+  {
+    "countryname": "Burundi",
+    "name": "Burundi",
+    "dial_code": "257",
+    "countryid": "147",
+    "code": "BI",
+    "isocode": "BDI"
+  },
+  {
+    "countryname": "Cambodia",
+    "name": "Cambodia",
+    "dial_code": "855",
+    "countryid": "102",
+    "code": "KH",
+    "isocode": "KHM"
+  },
+  {
+    "countryname": "Cameroon",
+    "name": "Cameroon",
+    "dial_code": "237",
+    "countryid": "148",
+    "code": "CM",
+    "isocode": "CMR"
+  },
+  {
+    "countryname": "Canada",
+    "name": "Canada",
+    "dial_code": "1",
+    "countryid": "2",
+    "code": "CA",
+    "isocode": "CAN"
+  },
+  {
+    "countryname": "Cape Verde",
+    "name": "Cape Verde",
+    "dial_code": "238",
+    "countryid": "149",
+    "code": "CV",
+    "isocode": "CPV"
+  },
+  {
+    "countryname": "Cayman Islands",
+    "name": "Cayman Islands",
+    "dial_code": "1345",
+    "countryid": "8",
+    "code": "KY",
+    "isocode": "CYM"
+  },
+  {
+    "countryname": "Central African Republic",
+    "name": "Central African Republic",
+    "dial_code": "236",
+    "countryid": "150",
+    "code": "CF",
+    "isocode": "CAF"
+  },
+  {
+    "countryname": "Chad",
+    "name": "Chad",
+    "dial_code": "235",
+    "countryid": "151",
+    "code": "TD",
+    "isocode": "TCD"
+  },
+  {
+    "countryname": "Chile",
+    "name": "Chile",
+    "dial_code": "56",
+    "countryid": "32",
+    "code": "CL",
+    "isocode": "CHL"
+  },
+  {
+    "countryname": "China",
+    "name": "China",
+    "dial_code": "86",
+    "countryid": "103",
+    "code": "CN",
+    "isocode": "CHN"

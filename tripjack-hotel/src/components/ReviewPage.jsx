@@ -17,6 +17,7 @@ const ReviewPage = () => {
   const [modalData, setModalData] = useState(null);
   const location = useLocation();
   const data = location.state?.data || null; // Access the data passed via navigate
+  console.log(data);
   const openModal = (data) => {
     setModalData(data); // Set the data to be displayed in the modal
     setModalOpen(true);
@@ -1868,17 +1869,14 @@ const ReviewPage = () => {
         <div className="price-breakup">
           <h3>Price Breakup</h3>
           <div className="price-row">
-            <span>1 Room x 1 Night</span>
+            <span>{nightCount} NIGHT{nightCount !== 1 ? 'S' : ''}</span>
             <span>{}</span>
           </div>
           <div className="price-row">
-            <span>Hotel Taxes</span>
-            <span>₹ 1,710</span>
+            <span>Total</span>
+            <span>{data.hInfo.ops[0]?.tp}</span>
           </div>
-          <div className="price-row">
-            <span>Donate ₹5 to build resilient travel destinations</span>
-            <span>₹ 0</span>
-          </div>
+          
           <div className="total-price">
             <strong>Total Amount to be paid</strong>
             <strong>₹ 11,209</strong>
