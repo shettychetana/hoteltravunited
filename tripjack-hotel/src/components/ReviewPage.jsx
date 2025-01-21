@@ -1879,7 +1879,7 @@ const ReviewPage = () => {
           
           <div className="total-price">
             <strong>Total Amount to be paid</strong>
-            <strong>₹ 11,209</strong>
+            <strong>{data.hInfo.ops[0]?.tp}</strong>
           </div>
         </div>
 
@@ -1909,38 +1909,8 @@ const ReviewPage = () => {
       <Grid container spacing={2}>
         {/* Hotel Details */}
         <Grid item xs={12} md={8}>
-          <Box>
-            <Typography variant="h5">ViVa Gardens ★★★★</Typography>
-            <Typography variant="subtitle1">
-              Gathage, Gatundu, Kiambu County, Kenya
-            </Typography>
-            <Typography variant="body2">
-              Phone No: 1-0-555555
-            </Typography>
-            <Typography variant="body2" color="error">
-              Last Cancellation Date: 31-12-2024
-            </Typography>
-          </Box>
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography>Check In</Typography>
-                <Typography variant="h6">02-01-2025</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Check Out</Typography>
-                <Typography variant="h6">03-01-2025</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Total Rooms</Typography>
-                <Typography variant="h6">1</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography>Total Guests</Typography>
-                <Typography variant="h6">2 Adults</Typography>
-              </Grid>
-            </Grid>
-          </Box>
+         
+          
         </Grid>
 
         {/* Fare Summary */}

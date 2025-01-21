@@ -12,7 +12,7 @@ const Footer = () => {
             About
           </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-  <img src="../images/footerlogo.png" alt="TravUnited Logo" max-width="150" height="50" style={{ marginRight: 5 }} />
+  <img src="../images/logo.jpeg" alt="TravUnited Logo" max-width="150" height="50" style={{ marginRight: 5 }} />
  
 </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>

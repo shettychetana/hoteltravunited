@@ -247,14 +247,18 @@
 // export default ResultsPage;
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel } from "@mui/material";
+import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel,IconButton } from "@mui/material";
 import axios from "axios";
-
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 const ResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { hotelData, message } = location.state || {};
   const hotels = hotelData?.searchResult?.his || [];
+  const size = hotelData?.searchResult?.size || 0;
+  const destination=hotelData?.searchResult?.ad.ctn || 0;
+  const hotels22 = hotelData || [];
+  console.log(hotels22);
 console.log("2ndpage",hotels);
   const [minPrice, setMinPrice] = useState(3867);
   const [maxPrice, setMaxPrice] = useState(3868);
@@ -367,70 +371,85 @@ console.log("2ndpage",hotels);
           </Paper>
         </Grid>
 
-        {/* Hotel Results */}
+       
         <Grid item xs={12} sm={8} md={9}>
-          <Paper elevation={3} style={{ padding: "16px" }}>
+         <p>Found {size} hotels for {destination}</p>
             {hotels.length > 0 ? (
               hotels.map((hotel, index) => (
-                <Paper key={index} style={{ marginBottom: "16px", padding: "16px" }} elevation={1}>
-                  <Grid container spacing={2} alignItems="center">
-                    {/* Hotel Image */}
-                    <Grid item xs={12} sm={3}>
-                      <img
-                        src={hotel.img[0]?.url || "placeholder.jpg"}
-                        alt={hotel.name}
-                        style={{
-                          width: "100%",
-                          height: "150px",
-                          borderRadius: "8px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </Grid>
+                
+                
 
-                    {/* Hotel Details */}
-                    <Grid item xs={12} sm={6}>
-                      <Typography variant="h6" style={{ fontWeight: "bold" ,textAlign:"left"}}>{hotel.name}</Typography>
-                      <Typography variant="body2" color="textSecondary" style={{ textAlign: "left" }}>
-                        {hotel.ad.adr} {hotel.ad.city.name}, {hotel.ad.state.name}
-                      </Typography>
-                      <Typography variant="body2" style={{ color: "orange" , textAlign: "left" }}>
-                        {"★".repeat(hotel.rt)}{" "}
-                        {"☆".repeat(5 - hotel.rt)}
-                      </Typography>
-                      {hotel.ifca && (
-                        <Typography variant="body2" style={{ color: "green", marginTop: "8px" }}>
-                          Free Cancellation Available
-                        </Typography>
-                      )}
-                    </Grid>
+    
+        <Paper style={{ marginBottom: '16px', padding: '16px' }} elevation={1}>
+          <Grid container spacing={2} alignItems="center">
+            {/* Hotel Image */}
+            <Grid item xs={12} sm={3}>
+              <img
+                src={hotel.img[0]?.url || 'placeholder.jpg'}
+                alt={hotel.name}
+                style={{
+                  width: '100%',
+                  height: '150px',
+                  borderRadius: '8px',
+                  objectFit: 'cover',
+                }}
+              />
+            </Grid>
 
-                    {/* Price and Action */}
-                    <Grid item xs={12} sm={3} style={{ textAlign: "right" }}>
-                      <Typography variant="h6" color="black" style={{ fontWeight: "bold" }}>
-                        ₹{hotel.pops[0]?.tpc.toFixed(0)}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {hotel.pops[0]?.fc[0]} Night(s)
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="warning"
-                        style={{ marginTop: "16px" }}
-                        onClick={() => handleSelectRoom(hotel.id)}
-                      >
-                        Select Room
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Paper>
+            {/* Hotel Details */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left' }}>
+                {hotel.name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" style={{ textAlign: 'left' }}>
+                {hotel.ad.adr}, {hotel.ad.city.name}, {hotel.ad.state.name}
+              </Typography>
+              <Typography variant="body2" style={{ color: 'orange', textAlign: 'left' }}>
+                {'★'.repeat(hotel.rt)}{' '}
+                {'☆'.repeat(5 - hotel.rt)}
+              </Typography>
+              <Typography variant="body2" style={{ fontWeight: 'bold', marginTop: '8px', color: '#4caf50' }}>
+                20+ Amenities
+              </Typography>
+              {hotel.ifca && (
+                <Typography variant="body2" style={{ color: 'green', marginTop: '8px' }}>
+                  Free Cancellation Available
+                </Typography>
+              )}
+            </Grid>
+
+            {/* Price and Action */}
+            <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
+              <Typography variant="h6" color="black" style={{ fontWeight: 'bold' }}>
+                ₹{hotel.pops[0]?.tpc.toFixed(0)}/night
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                excl. tax
+              </Typography>
+              <IconButton style={{ marginTop: '8px', color: 'red' }}>
+                <FavoriteBorderIcon />
+              </IconButton>
+              <Button
+                variant="contained"
+                color="warning"
+                style={{ marginTop: '16px' }}
+                onClick={() => handleSelectRoom(hotel.id)}
+              >
+                View Place
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
+     
+    
+                
               ))
             ) : (
               <Typography variant="h5" align="center" color="textSecondary">
                 {message || "No results found"}
               </Typography>
             )}
-          </Paper>
+          
         </Grid>
       </Grid>
     </div>
