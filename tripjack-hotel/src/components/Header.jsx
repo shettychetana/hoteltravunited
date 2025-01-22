@@ -79,7 +79,7 @@ const Header = () => {
           variant="outlined"
           color="inherit"
           fullWidth
-          style={{ marginTop: "8px", border: "1px solid #ff7043" }}
+          style={{ marginTop: "8px", border: "1px solidrgb(134, 114, 107)" }}
         >
           Log In
         </Button>
@@ -89,7 +89,7 @@ const Header = () => {
 
   return (
     <>
-      <AppBar position="static" style={{ backgroundColor: "#ff7043" }}>
+      <AppBar position="static" style={{ backgroundColor: "#ff6748" }}>
         <Toolbar
           style={{
             display: "flex",

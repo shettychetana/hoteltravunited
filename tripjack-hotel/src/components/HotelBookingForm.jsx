@@ -319,6 +319,7 @@ const updateChildAge = (roomIndex, childIndex, age) => {
     setSearching(false); // Stop searching after selection
     // You can now handle the selection (e.g., set the location, etc.)
     setSelectedLocation(value.id);
+    
   };
   
 

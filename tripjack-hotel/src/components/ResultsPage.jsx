@@ -1,243 +1,212 @@
 
-
-
-// import React from 'react';
-// import { useLocation } from 'react-router-dom';
-// import '../styles/ResultsPage.css';
-// import { Grid, Paper, Typography, Button } from '@mui/material';
-
-// const ResultsPage = () => {
-//   const location = useLocation();
-//   const { hotelData, message } = location.state || {};
-
-//   // Extract the array of hotels from the nested structure
-//   const hotels = hotelData?.searchResult?.his || [];
-
-//   return (
-//     <div className="results-page" style={{maxWidth: '1200px', margin: '0 auto', padding: '16px'}}>
-//       <Grid container spacing={2}>
-//         {/* Sidebar */}
-//         <Grid item xs={12} sm={4} md={3}>
-//           <Paper elevation={3} className="sidebar">
-//             <Typography variant="h6" gutterBottom>
-//               Sort By
-//             </Typography>
-//             <ul>
-//               <li>Rating</li>
-//               <li>Preferred</li>
-//               <li>Price</li>
-//             </ul>
-//           </Paper>
-//         </Grid>
-
-//         {/* Hotel Results */}
-//         <Grid item xs={12} sm={8} md={9}>
-//           <Paper elevation={3} className="hotel-container">
-//             {hotels.length > 0 ? (
-//               <div>
-//                 {hotels.map((hotel, index) => (
-//                   <Paper key={index} className="hotel-card" elevation={1}>
-//                     <Grid container spacing={2} alignItems="center">
-//                       {/* Hotel Image */}
-//                       <Grid item xs={3}>
-//                         <img
-//                           src={hotel.img[0]?.url || 'placeholder.jpg'}
-//                           alt={hotel.name}
-//                           className="hotel-image"
-//                           style={{ width: '100%',height: '100%', borderRadius: '8px' }}
-//                         />
-//                       </Grid>
-
-//                       {/* Hotel Details */}
-//                       <Grid item xs={6}>
-//                      <Typography variant="h6" gutterBottom style={{textAlign: 'left'}}>
-//   {hotel.name}
-// </Typography>
-//                         <Typography variant="body2" color="textSecondary"  style={{textAlign: 'left'}}>
-//                           {hotel.ad.adr}, {hotel.ad.city.name}, {hotel.ad.state.name}
-//                         </Typography>
-                        
-                        
-//                         <Typography variant="body2" className="rating" style={{ color: 'orange',textAlign: 'left' }}>
-//                           {'★'.repeat(hotel.rt)}{'☆'.repeat(5 - hotel.rt)}
-//                         </Typography>
-//                         {hotel.ifca && (
-//                           <Typography
-//                             variant="body2"
-//                             style={{ color: 'green', marginTop: '8px',textAlign: 'left' }}
-//                           >
-//                             Free Cancellation Available
-//                           </Typography>
-//                         )}
-//                       </Grid>
-
-//                       {/* Price and Action */}
-//                       <Grid item xs={3} style={{ textAlign: 'right' }}>
-//                         <Typography variant="h6" color="black" style={{fontWeight: 'bold'}}>
-//                           ₹{hotel.pops[0]?.tpc.toFixed(0)}
-//                         </Typography>
-//                         <Typography variant="body2" color="textSecondary">
-//                           {hotel.pops[0]?.fc[0]} <br />  Night(s)
-//                         </Typography>
-//                         <Button
-//                           variant="contained"
-//                           color="warning"
-//                           style={{
-//                             marginTop: '16px',
-//                             backgroundColor: '#ff6600',
-//                             color: 'white',
-//                           }}
-//                         >
-//                           Select Room
-//                         </Button>
-//                       </Grid>
-//                     </Grid>
-//                   </Paper>
-//                 ))}
-//               </div>
-//             ) : (
-//               <Typography variant="h5" align="center" color="textSecondary">
-//                 {message || 'No results found'}
-//               </Typography>
-//             )}
-//           </Paper>
-//         </Grid>
-//       </Grid>
-//     </div>
-//   );
-// };
-
-// export default ResultsPage;
-
-// import React from 'react';
-// import { useLocation, useNavigate } from 'react-router-dom';
-// import '../styles/ResultsPage.css';
-// import { Grid, Paper, Typography, Button } from '@mui/material';
-// import axios from 'axios';
-
+// import React, { useState } from "react";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel,IconButton } from "@mui/material";
+// import axios from "axios";
+// import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// import "../styles/ResultsPage.css";
+// import { BorderColor } from "@mui/icons-material";
 // const ResultsPage = () => {
 //   const location = useLocation();
 //   const navigate = useNavigate();
 //   const { hotelData, message } = location.state || {};
-
-//   // Extract the array of hotels from the nested structure
 //   const hotels = hotelData?.searchResult?.his || [];
+//   const size = hotelData?.searchResult?.size || 0;
+//   const destination=hotelData?.searchResult?.his[0].ad.ctn|| 0;
+//   const hotels22 = hotelData || [];
+//   console.log(hotels22);
+// console.log("2ndpage",hotels);
+//   const [minPrice, setMinPrice] = useState(3867);
+//   const [maxPrice, setMaxPrice] = useState(3868);
+//   const [selectedRating, setSelectedRating] = useState(null);
+//   const [freeCancellation, setFreeCancellation] = useState(false);
 
-//   // Handle Select Room Click
+//   const handlePriceChange = (e) => {
+//     const value = Number(e.target.value);
+//     if (e.target.name === "minPrice") setMinPrice(value);
+//     if (e.target.name === "maxPrice") setMaxPrice(value);
+//   };
+
 //   const handleSelectRoom = async (hotelId) => {
 //     try {
-//       const apiUrl = 'https://tripjack.com/hms/v1/hotelDetail-search';
-//       const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+//       const apiUrl = "https://tripjack.com/hms/v1/hotelDetail-search";
+//       const apiKey = "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172";
 //       const requestBody = { id: hotelId };
 
 //       const response = await axios.post(apiUrl, requestBody, {
 //         headers: {
-//           'Content-Type': 'application/json',
-//           'apikey': apiKey,
+//           "Content-Type": "application/json",
+//           apikey: apiKey,
 //         },
 //       });
 
-//       // Navigate to HotelDetail page with fetched data
-//       navigate('/hotelDetail', { state: { hotelDetail: response.data } });
+//       navigate("/hotelDetail", { state: { hotelDetail: response.data } });
 //     } catch (error) {
-//       console.error('Error fetching hotel details:', error);
-//       alert('Failed to fetch hotel details. Please try again.');
+//       console.error("Error fetching hotel details:", error);
+//       alert("Failed to fetch hotel details. Please try again.");
 //     }
 //   };
 
 //   return (
-//     <div className="results-page" style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
+//     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px" }}>
 //       <Grid container spacing={2}>
 //         {/* Sidebar */}
 //         <Grid item xs={12} sm={4} md={3}>
-//           <Paper elevation={3} className="sidebar">
+//           <Paper elevation={3} style={{ padding: "16px" }}>
 //             <Typography variant="h6" gutterBottom>
-//               Sort By
+//               Filters
 //             </Typography>
-//             <ul style={{ listStyleType: 'none', padding: 0 }}>
-//               <li style={{ padding: '8px 0', cursor: 'pointer' }}>Rating</li>
-//               <li style={{ padding: '8px 0', cursor: 'pointer' }}>Preferred</li>
-//               <li style={{ padding: '8px 0', cursor: 'pointer' }}>Price</li>
-//             </ul>
+
+//             {/* Search by Name */}
+//             <TextField
+//               fullWidth
+//               label="Search by Hotel Name"
+//               variant="outlined"
+//               size="small"
+//               margin="normal"
+//             />
+
+//             {/* Favorites */}
+//             <Button fullWidth variant="outlined" color="secondary" style={{ marginBottom: "16px" }}>
+//               View My Favourites ❤️
+//             </Button>
+
+//             {/* Free Cancellation */}
+//             <FormControlLabel
+//               control={
+//                 <Checkbox
+//                   checked={freeCancellation}
+//                   onChange={(e) => setFreeCancellation(e.target.checked)}
+//                 />
+//               }
+//               label="Free Cancellation Available"
+//             />
+
+//             {/* Price Filter */}
+//             <Typography variant="subtitle1" gutterBottom>
+//               Price Range
+//             </Typography>
+//             <Box display="flex" gap={1} alignItems="center" marginBottom="16px">
+//               <TextField
+//                 type="number"
+//                 name="minPrice"
+//                 value={minPrice}
+//                 onChange={handlePriceChange}
+//                 label="Min Price"
+//                 variant="outlined"
+//                 size="small"
+//               />
+//               <Typography variant="body1">to</Typography>
+//               <TextField
+//                 type="number"
+//                 name="maxPrice"
+//                 value={maxPrice}
+//                 onChange={handlePriceChange}
+//                 label="Max Price"
+//                 variant="outlined"
+//                 size="small"
+//               />
+//             </Box>
+
+//             {/* Star Rating Filter */}
+//             <Typography variant="subtitle1" gutterBottom>
+//               Star Rating
+//             </Typography>
+//             {[5, 4, 3, 2, 1, 0].map((rating) => (
+//               <FormControlLabel
+//                 key={rating}
+//                 control={
+//                   <Checkbox
+//                     checked={selectedRating === rating}
+//                     onChange={() => setSelectedRating(rating)}
+//                   />
+//                 }
+//                 label={`${rating} Star${rating !== 1 ? "s" : ""}`}
+//               />
+//             ))}
 //           </Paper>
 //         </Grid>
 
-//         {/* Hotel Results */}
+       
 //         <Grid item xs={12} sm={8} md={9}>
-//           <Paper elevation={3} className="hotel-container">
+//          <p style={{fontFamily:'lato',fontSize:'26px',fontWeight:'900',lineHeight:'26px',display:'flex',alignItems:'center',color:'#000000'}}>Found {size} hotels for {destination} </p>
 //             {hotels.length > 0 ? (
-//               <div>
-//                 {hotels.map((hotel, index) => (
-//                   <Paper key={index} className="hotel-card" elevation={1} style={{ marginBottom: '16px' }}>
-//                     <Grid container spacing={2} alignItems="center">
-//                       {/* Hotel Image */}
-//                       <Grid item xs={12} sm={3}>
-//                         <img
-//                           src={hotel.img[0]?.url || 'placeholder.jpg'}
-//                           alt={hotel.name}
-//                           className="hotel-image"
-//                           style={{
-//                             width: '100%',
-//                             height: '100%',
-//                             borderRadius: '8px',
-//                             objectFit: 'cover',
-//                             maxHeight: '150px',
-//                           }}
-//                         />
-//                       </Grid>
+//               hotels.map((hotel, index) => (
+                
+                
 
-//                       {/* Hotel Details */}
-//                       <Grid item xs={12} sm={6}>
-//                         <Typography variant="h6" gutterBottom style={{ textAlign: 'left' }}>
-//                           {hotel.name}
-//                         </Typography>
-//                         <Typography variant="body2" color="textSecondary" style={{ textAlign: 'left' }}>
-//                           {hotel.ad.adr}, {hotel.ad.city.name}, {hotel.ad.state.name}
-//                         </Typography>
-//                         <Typography variant="body2" style={{ color: 'orange', textAlign: 'left' }}>
-//                           {'★'.repeat(hotel.rt)}{'☆'.repeat(5 - hotel.rt)}
-//                         </Typography>
-//                         {hotel.ifca && (
-//                           <Typography
-//                             variant="body2"
-//                             style={{ color: 'green', marginTop: '8px', textAlign: 'left' }}
-//                           >
-//                             Free Cancellation Available
-//                           </Typography>
-//                         )}
-//                       </Grid>
+    
+//         <Paper className="HOVER" style={{ marginBottom: '16px', padding: '16px' }} elevation={1}>
+//           <Grid container spacing={2} alignItems="center">
+//             {/* Hotel Image */}
+//             <Grid item xs={12} sm={3} >
+//             <img
+//   src={hotel.img?.[0]?.url || 'https://via.placeholder.com/300x150?text=No+Image+Available'}
+//   alt={hotel.name || 'No Image'}
+//   style={{
+//     width: '100%',
+//     height: '150px',
+//     borderRadius: '8px',
+//     objectFit: 'cover',
+//     boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+//   }}
+// />
+//             </Grid>
 
-//                       {/* Price and Action */}
-//                       <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
-//                         <Typography variant="h6" color="black" style={{ fontWeight: 'bold' }}>
-//                           ₹{hotel.pops[0]?.tpc.toFixed(0)}
-//                         </Typography>
-//                         <Typography variant="body2" color="textSecondary">
-//                           {hotel.pops[0]?.fc[0]} <br /> Night(s)
-//                         </Typography>
-//                         <Button
-//                           variant="contained"
-//                           color="warning"
-//                           style={{
-//                             marginTop: '16px',
-//                             backgroundColor: '#ff6600',
-//                             color: 'white',
-//                           }}
-//                           onClick={() => handleSelectRoom(hotel.id)} // Pass the hotel ID
-//                         >
-//                           Select Room
-//                         </Button>
-//                       </Grid>
-//                     </Grid>
-//                   </Paper>
-//                 ))}
-//               </div>
+//             {/* Hotel Details */}
+//             <Grid item xs={12} sm={6}>
+//               <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left' ,fontFamily:'lato',fontSize:'20px',fontWeight:'900',lineHeight:"20px"}} >
+//                 {hotel.name}
+//               </Typography>
+//               <Typography variant="body2" color="textSecondary" style={{ textAlign: 'left' }}>
+//                 {hotel.ad.adr}, {hotel.ad.city.name}, {hotel.ad.state.name}
+//               </Typography>
+//               <Typography variant="body2" style={{ color: 'orange', textAlign: 'left' }}>
+//                 {'★'.repeat(hotel.rt)}{' '}
+//                 {'☆'.repeat(5 - hotel.rt)}
+//               </Typography>
+//               <Typography variant="body2" style={{ fontWeight: 'bold', marginTop: '8px', color: '#4caf50' }}>
+//                 20+ Amenities
+//               </Typography>
+//               {hotel.ifca && (
+//                 <Typography variant="body2" style={{ color: 'green', marginTop: '8px' }}>
+//                   Free Cancellation Available
+//                 </Typography>
+//               )}
+//             </Grid>
+
+//             {/* Price and Action */}
+//             <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
+//               <Typography variant="h6" color="black" style={{ fontWeight: 'bold' }}>
+//                 ₹{hotel.pops[0]?.tpc.toFixed(0)}/night
+//               </Typography>
+//               <Typography variant="body2" color="textSecondary">
+//                 excl. tax
+//               </Typography>
+//               <IconButton style={{ marginTop: '8px', color: 'red' }}>
+//                 <FavoriteBorderIcon />
+//               </IconButton>
+//               <Button
+//                 variant="contained"
+//                 color="warning"
+//                 style={{ marginTop: '16px' ,backgroundColor:'#ff6748',color:'#ffffff' }}
+//                 onClick={() => handleSelectRoom(hotel.id)}
+//               >
+//                 View Place
+//               </Button>
+//             </Grid>
+//           </Grid>
+//         </Paper>
+     
+    
+                
+//               ))
 //             ) : (
 //               <Typography variant="h5" align="center" color="textSecondary">
-//                 {message || 'No results found'}
+//                 {message || "No results found"}
 //               </Typography>
 //             )}
-//           </Paper>
+          
 //         </Grid>
 //       </Grid>
 //     </div>
@@ -245,45 +214,69 @@
 // };
 
 // export default ResultsPage;
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel,IconButton } from "@mui/material";
+import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import axios from "axios";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import "../styles/ResultsPage.css";
+
 const ResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { hotelData, message } = location.state || {};
   const hotels = hotelData?.searchResult?.his || [];
   const size = hotelData?.searchResult?.size || 0;
-  const destination=hotelData?.searchResult?.ad.ctn || 0;
-  const hotels22 = hotelData || [];
-  console.log(hotels22);
-console.log("2ndpage",hotels);
-  const [minPrice, setMinPrice] = useState(3867);
-  const [maxPrice, setMaxPrice] = useState(3868);
+  const destination = hotelData?.searchResult?.his[0]?.ad.ctn || "";
+  
+  // State management
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [selectedRating, setSelectedRating] = useState(null);
-  const [freeCancellation, setFreeCancellation] = useState(false);
+  //const [freeCancellation, setFreeCancellation] = useState(false);
+  const [filteredHotels, setFilteredHotels] = useState([]);
+
+  // Initialize price range from data
+  useEffect(() => {
+    if (hotels.length > 0) {
+      const prices = hotels.map(hotel => hotel.pops[0]?.tpc || 0);
+      const min = Math.floor(Math.min(...prices));
+      const max = Math.ceil(Math.max(...prices));
+      setMinPrice(min);
+      setMaxPrice(max);
+    }
+  }, [hotels]);
+
+  // Update filters whenever criteria changes
+  useEffect(() => {
+    const filtered = hotels.filter(hotel => {
+      const hotelPrice = hotel.pops[0]?.tpc || 0;
+      const priceInRange = hotelPrice >= minPrice && hotelPrice <= maxPrice;
+      const ratingMatches = selectedRating === null || hotel.rt === selectedRating;
+      //const cancellationMatches = !freeCancellation || hotel.ifca;
+      
+      return priceInRange && ratingMatches ;
+    });
+    
+    setFilteredHotels(filtered);
+  }, [hotels, minPrice, maxPrice, selectedRating]);
 
   const handlePriceChange = (e) => {
-    const value = Number(e.target.value);
-    if (e.target.name === "minPrice") setMinPrice(value);
-    if (e.target.name === "maxPrice") setMaxPrice(value);
+    const value = Math.max(0, Number(e.target.value));
+    if (e.target.name === "minPrice") {
+      setMinPrice(Math.min(value, maxPrice));
+    } else if (e.target.name === "maxPrice") {
+      setMaxPrice(Math.max(value, minPrice));
+    }
   };
 
   const handleSelectRoom = async (hotelId) => {
     try {
       const apiUrl = "https://tripjack.com/hms/v1/hotelDetail-search";
       const apiKey = "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172";
-      const requestBody = { id: hotelId };
-
-      const response = await axios.post(apiUrl, requestBody, {
-        headers: {
-          "Content-Type": "application/json",
-          apikey: apiKey,
-        },
+      const response = await axios.post(apiUrl, { id: hotelId }, {
+        headers: { "Content-Type": "application/json", apikey: apiKey }
       });
-
       navigate("/hotelDetail", { state: { hotelDetail: response.data } });
     } catch (error) {
       console.error("Error fetching hotel details:", error);
@@ -294,42 +287,13 @@ console.log("2ndpage",hotels);
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "16px" }}>
       <Grid container spacing={2}>
-        {/* Sidebar */}
+        {/* Filters Sidebar */}
         <Grid item xs={12} sm={4} md={3}>
           <Paper elevation={3} style={{ padding: "16px" }}>
-            <Typography variant="h6" gutterBottom>
-              Filters
-            </Typography>
-
-            {/* Search by Name */}
-            <TextField
-              fullWidth
-              label="Search by Hotel Name"
-              variant="outlined"
-              size="small"
-              margin="normal"
-            />
-
-            {/* Favorites */}
-            <Button fullWidth variant="outlined" color="secondary" style={{ marginBottom: "16px" }}>
-              View My Favourites ❤️
-            </Button>
-
-            {/* Free Cancellation */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={freeCancellation}
-                  onChange={(e) => setFreeCancellation(e.target.checked)}
-                />
-              }
-              label="Free Cancellation Available"
-            />
+            <Typography variant="h6" gutterBottom>Filters</Typography>
 
             {/* Price Filter */}
-            <Typography variant="subtitle1" gutterBottom>
-              Price Range
-            </Typography>
+            <Typography variant="subtitle1" gutterBottom>Price Range</Typography>
             <Box display="flex" gap={1} alignItems="center" marginBottom="16px">
               <TextField
                 type="number"
@@ -339,6 +303,7 @@ console.log("2ndpage",hotels);
                 label="Min Price"
                 variant="outlined"
                 size="small"
+                inputProps={{ min: 0 }}
               />
               <Typography variant="body1">to</Typography>
               <TextField
@@ -349,107 +314,120 @@ console.log("2ndpage",hotels);
                 label="Max Price"
                 variant="outlined"
                 size="small"
+                inputProps={{ min: minPrice }}
               />
             </Box>
 
             {/* Star Rating Filter */}
-            <Typography variant="subtitle1" gutterBottom>
-              Star Rating
-            </Typography>
+            <Typography variant="subtitle1" gutterBottom>Star Rating</Typography>
             {[5, 4, 3, 2, 1, 0].map((rating) => (
               <FormControlLabel
                 key={rating}
                 control={
                   <Checkbox
                     checked={selectedRating === rating}
-                    onChange={() => setSelectedRating(rating)}
+                    onChange={() => setSelectedRating(prev => prev === rating ? null : rating)}
                   />
                 }
                 label={`${rating} Star${rating !== 1 ? "s" : ""}`}
               />
             ))}
+
+            {/* Free Cancellation Filter */}
+            {/* <FormControlLabel
+              control={
+                <Checkbox
+                  checked={freeCancellation}
+                  onChange={(e) => setFreeCancellation(e.target.checked)}
+                />
+              }
+              label="Free Cancellation"
+              style={{ marginTop: "16px" }}
+            /> */}
           </Paper>
         </Grid>
 
-       
+        {/* Results List */}
         <Grid item xs={12} sm={8} md={9}>
-         <p>Found {size} hotels for {destination}</p>
-            {hotels.length > 0 ? (
-              hotels.map((hotel, index) => (
-                
-                
+          <Typography variant="h4" style={{fontFamily:'lato',fontSize:'26px',fontWeight:'900',lineHeight:'26px',display:'flex',alignItems:'center',color:'#000000'}}>
+            {filteredHotels.length} of {size} hotels in {destination}
+          </Typography>
 
-    
-        <Paper style={{ marginBottom: '16px', padding: '16px' }} elevation={1}>
-          <Grid container spacing={2} alignItems="center">
-            {/* Hotel Image */}
-            <Grid item xs={12} sm={3}>
-              <img
-                src={hotel.img[0]?.url || 'placeholder.jpg'}
-                alt={hotel.name}
-                style={{
-                  width: '100%',
-                  height: '150px',
-                  borderRadius: '8px',
-                  objectFit: 'cover',
-                }}
-              />
-            </Grid>
+          {filteredHotels.length > 0 ? (
+            filteredHotels.map((hotel) => (
+              <Paper key={hotel.id} className="HOVER" style={{ marginBottom: '16px', padding: '16px' }} elevation={1}>
+                <Grid container spacing={2} alignItems="center">
+                  {/* Hotel Image */}
+                  <Grid item xs={12} sm={3}>
+                    <img
+                      src={hotel.img?.[0]?.url || 'https://via.placeholder.com/300x150?text=No+Image'}
+                      alt={hotel.name}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        borderRadius: '8px',
+                        objectFit: 'cover',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                      }}
+                    />
+                  </Grid>
 
-            {/* Hotel Details */}
-            <Grid item xs={12} sm={6}>
-              <Typography variant="h6" style={{ fontWeight: 'bold', textAlign: 'left' }}>
-                {hotel.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" style={{ textAlign: 'left' }}>
-                {hotel.ad.adr}, {hotel.ad.city.name}, {hotel.ad.state.name}
-              </Typography>
-              <Typography variant="body2" style={{ color: 'orange', textAlign: 'left' }}>
-                {'★'.repeat(hotel.rt)}{' '}
-                {'☆'.repeat(5 - hotel.rt)}
-              </Typography>
-              <Typography variant="body2" style={{ fontWeight: 'bold', marginTop: '8px', color: '#4caf50' }}>
-                20+ Amenities
-              </Typography>
-              {hotel.ifca && (
-                <Typography variant="body2" style={{ color: 'green', marginTop: '8px' }}>
-                  Free Cancellation Available
-                </Typography>
-              )}
-            </Grid>
+                  {/* Hotel Details */}
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="h5" style={{ 
+                      fontWeight: 900,
+                      fontFamily: 'lato',
+                     textAlign: 'left',
+                      marginBottom: '8px'
+                    }}>
+                      {hotel.name}
+                    </Typography>
+                    <Typography   >
+                      <div style={{ display: 'flex', alignItems: 'left' }}>
+                        <div style={{fontFamily:'lato',fontSize:'14px',fontWeight:'700',lineHeight:"17px",padding:'5px 5px 5px 5px',color:'#ff6748'}}>{hotel.ad.adr}</div>
+                        <div>{hotel.ad.city?.name}</div>
+                      </div>
+                     
+                    </Typography>
+                    <Typography variant="body2" style={{ color: 'orange', margin: '8px 0' }}>
+                      {'★'.repeat(hotel.rt)}{'☆'.repeat(5 - hotel.rt)}
+                    </Typography>
+                    {hotel.ifca && (
+                      <Typography variant="body2" style={{ color: 'green' }}>
+                        Free Cancellation Available
+                      </Typography>
+                    )}
+                  </Grid>
 
-            {/* Price and Action */}
-            <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
-              <Typography variant="h6" color="black" style={{ fontWeight: 'bold' }}>
-                ₹{hotel.pops[0]?.tpc.toFixed(0)}/night
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                excl. tax
-              </Typography>
-              <IconButton style={{ marginTop: '8px', color: 'red' }}>
-                <FavoriteBorderIcon />
-              </IconButton>
-              <Button
-                variant="contained"
-                color="warning"
-                style={{ marginTop: '16px' }}
-                onClick={() => handleSelectRoom(hotel.id)}
-              >
-                View Place
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
-     
-    
-                
-              ))
-            ) : (
-              <Typography variant="h5" align="center" color="textSecondary">
-                {message || "No results found"}
-              </Typography>
-            )}
-          
+                  {/* Price and Actions */}
+                  <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
+                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                      ₹{hotel.pops[0]?.tpc.toFixed(0)}/night
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" style={{ margin: '8px 0' }}>
+                      excl. tax
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      style={{ 
+                        backgroundColor: '#ff6748',
+                        color: '#ffffff',
+                        marginTop: '8px',
+                        width: '100%'
+                      }}
+                      onClick={() => handleSelectRoom(hotel.id)}
+                    >
+                      View Rooms
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Paper>
+            ))
+          ) : (
+            <Typography variant="h5" align="center" color="textSecondary" style={{ marginTop: '40px' }}>
+              No hotels match your filters
+            </Typography>
+          )}
         </Grid>
       </Grid>
     </div>

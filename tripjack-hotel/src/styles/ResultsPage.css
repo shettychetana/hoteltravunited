@@ -96,3 +96,6 @@ li:hover {
     text-align: center;
   }
 }
+ .HOVER:hover {
+    borderColor: "#FF6748"  ;
+ }

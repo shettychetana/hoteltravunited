@@ -29,11 +29,15 @@ const HotelDetail = () => {
   const location = useLocation();
   const { hotelDetail } = location.state || {};
   console.log("hotelroom details",hotelDetail);
- const [value, setValue] = useState(0); // State to manage active tab
+ const [value, setValue] = useState(0); 
  const [openModal, setOpenModal] = useState(false);
  const [modalData, setModalData] = useState(null);
  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+ const [isExpanded, setIsExpanded] = useState(false);
 
+  const handleToggleDescription = () => {
+    setIsExpanded(!isExpanded);
+  };
 const handleNext = () => {
   setCurrentImageIndex((prevIndex) => (prevIndex + 1) % hotelDetail?.hotel?.img.length);
 };
@@ -42,38 +46,7 @@ const standardImages = hotelDetail?.hotel?.img?.filter(image => image.sz === "St
 const handlePrev = () => {
   setCurrentImageIndex((prevIndex) => (prevIndex - 1 + hotelDetail?.hotel?.img.length) % hotelDetail?.hotel?.img.length);
 };
-// const navigateToReviewPage = async (hotelId, roomId) => {
-//   const apiUrl = `https://tripjack.com/hms/v1/hotel-review`;
-//   const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
-  
-//   const body = {
-//     hotelId: hotelId,
-//     optionId: roomId
-//   };
 
-//   try {
-//     const response = await fetch(apiUrl, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'apikey': apiKey
-//       },
-//       body: JSON.stringify(body)
-//     });
-
-//     if (response.ok) {
-//       const data = await response.json();
-//       console.log(data); // Get the response data
-//       // Navigate to the review page and pass the response data
-//       //window.location.href = `/review`;
-//       window.location.href = `/review/${hotelId}/${roomId}`;
-//     } else {
-//       console.error('Failed to submit review:', response.statusText);
-//     }
-//   } catch (error) {
-//     console.error('Error during API call:', error);
-//   }
-// };
 
 
 const navigateToReviewPage = async (hotelId, roomId) => {
@@ -86,7 +59,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
     optionId: roomId
   };
 
- // Use navigate for programmatic navigation
+ 
 
   try {
     const response = await fetch(apiUrl, {
@@ -114,7 +87,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
 // Carousel JSX
 <div style={{ position: 'relative' }}>
   <img
-    src={hotelDetail?.hotel?.img[currentImageIndex]?.url}
+    src={hotelDetail?.hotel?.img[currentImageIndex]?.url || 'https://via.placeholder.com/300x150?text=No+Image+Available'}
     alt="Room type"
     style={{ width: '100%', height: 'auto', borderRadius: '8px' }} // Adjust styles as needed
   />
@@ -129,21 +102,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
  const handleCloseModal = () => {
    setOpenModal(false);
  };
-//  const TabPanel = (props) => {
-//   const { children, value, index, ...other } = props;
 
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`simple-tabpanel-${index}`}
-//       aria-labelledby={`simple-tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-//     </div>
-//   );
-// }
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -162,8 +121,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
   const uniqueImages = img.filter(
     (image, index, self) => index === self.findIndex((i) => i.url === image.url) && image.sz === "Standard"
   );
-  // Filter images to include only odd-indexed ones
-  //const oddIndexedImages = uniqueImages.filter((_, index) => index % 2 !== 0);
+  
 
   return (
     <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -218,6 +176,14 @@ const navigateToReviewPage = async (hotelId, roomId) => {
             <Typography variant="h6" gutterBottom>
   About This Hotel
 </Typography>
+
+<div> <Typography variant="h4">{hotelDetail?.hotel?.name}</Typography>
+      <Typography variant="body1">
+        Amenities: {isExpanded ? hotelDetail?.hotel?.des : `${hotelDetail?.hotel?.des.substring(0, 100)}...`}
+      </Typography>
+      <Button onClick={handleToggleDescription}>
+        {isExpanded ? 'Read Less' : 'Read More'}
+      </Button></div>
 <div style={{ margin: '16px 0' }}>
   {hotelDetail.hotel.des ? (
     (() => {
