@@ -218,7 +218,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Grid, Paper, Typography, Button, Box, TextField, Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import axios from "axios";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+//import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import "../styles/ResultsPage.css";
 
 const ResultsPage = () => {
@@ -235,7 +235,33 @@ const ResultsPage = () => {
   const [selectedRating, setSelectedRating] = useState(null);
   //const [freeCancellation, setFreeCancellation] = useState(false);
   const [filteredHotels, setFilteredHotels] = useState([]);
+  const [selectedPropertyType, setSelectedPropertyType] = useState([]);
 
+  // Extract unique property types
+  const propertyTypes = [...new Set(hotels.map(hotel => hotel.pt))];
+  
+  // Update filters whenever criteria changes
+  useEffect(() => {
+    const filtered = hotels.filter(hotel => {
+      const hotelPrice = hotel.pops[0]?.tpc || 0;
+      const priceInRange = hotelPrice >= minPrice && hotelPrice <= maxPrice;
+      const ratingMatches = selectedRating === null || hotel.rt === selectedRating;
+      const propertyMatches = selectedPropertyType.length === 0 || selectedPropertyType.includes(hotel.pt);
+  
+      return priceInRange && ratingMatches && propertyMatches;
+    });
+  
+    setFilteredHotels(filtered);
+  }, [hotels, minPrice, maxPrice, selectedRating, selectedPropertyType]);
+  
+  // Handle property type change
+  const handlePropertyTypeChange = (type) => {
+    setSelectedPropertyType(prev => 
+      prev.includes(type) 
+        ? prev.filter(pt => pt !== type) 
+        : [...prev, type]
+    );
+  };
   // Initialize price range from data
   useEffect(() => {
     if (hotels.length > 0) {
@@ -290,10 +316,12 @@ const ResultsPage = () => {
         {/* Filters Sidebar */}
         <Grid item xs={12} sm={4} md={3}>
           <Paper elevation={3} style={{ padding: "16px" }}>
-            <Typography variant="h6" gutterBottom>Filters</Typography>
+            <Typography variant="h6" gutterBottom style={{ fontWeight: "700" , color: "black",fontFamily:'lato',fontSize:'20px',lineHeight:"20px"}}>Filters</Typography>
 
             {/* Price Filter */}
-            <Typography variant="subtitle1" gutterBottom>Price Range</Typography>
+            <Typography variant="subtitle1" gutterBottom style={{ fontWeight: "700" , color: "black",fontFamily:'lato',fontSize:'16px',lineHeight:"16px"}}>Suggested For You</Typography>
+            <Typography variant="subtitle1" gutterBottom style={{ fontWeight: "700" , color: "black",fontFamily:'lato',fontSize:'16px',lineHeight:"16px",padding:"20px"}}>Price Range</Typography>
+
             <Box display="flex" gap={1} alignItems="center" marginBottom="16px">
               <TextField
                 type="number"
@@ -319,9 +347,10 @@ const ResultsPage = () => {
             </Box>
 
             {/* Star Rating Filter */}
-            <Typography variant="subtitle1" gutterBottom>Star Rating</Typography>
+            <Typography variant="subtitle1" gutterBottom style={{ fontWeight: "700" , color: "black",fontFamily:'lato',fontSize:'16px',lineHeight:"16px"}}>Star Rating</Typography>
+            <Box display="flex" flexDirection="column" alignItems="flex-start">
             {[5, 4, 3, 2, 1, 0].map((rating) => (
-              <FormControlLabel
+              <FormControlLabel style={{ fontWeight: "400" , color: "#4A4A4A",fontFamily:'lato',fontSize:'14px',lineHeight:"20px"}}
                 key={rating}
                 control={
                   <Checkbox
@@ -329,21 +358,28 @@ const ResultsPage = () => {
                     onChange={() => setSelectedRating(prev => prev === rating ? null : rating)}
                   />
                 }
-                label={`${rating} Star${rating !== 1 ? "s" : ""}`}
+                label={`${rating} STAR${rating !== 1&& rating!==0 ? "S" : ""}`}
               />
             ))}
+            </Box>
+            
 
-            {/* Free Cancellation Filter */}
-            {/* <FormControlLabel
-              control={
-                <Checkbox
-                  checked={freeCancellation}
-                  onChange={(e) => setFreeCancellation(e.target.checked)}
-                />
-              }
-              label="Free Cancellation"
-              style={{ marginTop: "16px" }}
-            /> */}
+            {/* Property Type Filter */}
+{/* Property Type Filter */}
+<Typography variant="subtitle1" gutterBottom style={{ fontWeight: "700" , color: "black",fontFamily:'lato',fontSize:'16px',lineHeight:"16px"}}>Property Type</Typography>
+<Box display="flex" flexDirection="column" alignItems="flex-start">
+  {propertyTypes.map((type) => (
+    <Box key={type} display="flex" flexDirection="row" alignItems="center"  style={{ fontWeight: "400" , color: "#4A4A4A",fontFamily:'lato',fontSize:'14px',lineHeight:"20px"}}>
+      <Checkbox
+        checked={selectedPropertyType.includes(type)}
+        onChange={() => handlePropertyTypeChange(type)}
+      />
+      <Typography variant="body1" style={{ marginLeft: '8px' }}>{type}</Typography>
+    </Box>
+  ))}
+</Box>
+
+
           </Paper>
         </Grid>
 
@@ -383,29 +419,29 @@ const ResultsPage = () => {
                       {hotel.name}
                     </Typography>
                     <Typography   >
-                      <div style={{ display: 'flex', alignItems: 'left' }}>
-                        <div style={{fontFamily:'lato',fontSize:'14px',fontWeight:'700',lineHeight:"17px",padding:'5px 5px 5px 5px',color:'#ff6748'}}>{hotel.ad.adr}</div>
-                        <div>{hotel.ad.city?.name}</div>
+                      <div style={{  alignItems: 'left' }}>
+                        <div style={{textAlign:'left', fontFamily:'lato',fontSize:'14px',fontWeight:'700',lineHeight:"17px",padding:'5px 5px 5px 5px',color:'#ff6748'}}>{hotel.ad.city?.name}</div>
+                        <div style={{textAlign:'left'}}> {hotel.ad.adr}</div>
                       </div>
                      
                     </Typography>
-                    <Typography variant="body2" style={{ color: 'orange', margin: '8px 0' }}>
+                    <Typography variant="body2" style={{ color: 'orange', margin: '8px 0', textAlign: 'left' }}>
                       {'★'.repeat(hotel.rt)}{'☆'.repeat(5 - hotel.rt)}
                     </Typography>
-                    {hotel.ifca && (
+                    {/* {hotel.ifca && (
                       <Typography variant="body2" style={{ color: 'green' }}>
                         Free Cancellation Available
                       </Typography>
-                    )}
+                    )} */}
                   </Grid>
 
                   {/* Price and Actions */}
                   <Grid item xs={12} sm={3} style={{ textAlign: 'right' }}>
-                    <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                      ₹{hotel.pops[0]?.tpc.toFixed(0)}/night
-                    </Typography>
+                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+  ₹{hotel.pops[0]?.tpc.toFixed(0)}
+</Typography>
                     <Typography variant="body2" color="textSecondary" style={{ margin: '8px 0' }}>
-                      excl. tax
+                    {hotel.pops[0]?.fc}
                     </Typography>
                     <Button
                       variant="contained"
@@ -424,9 +460,46 @@ const ResultsPage = () => {
               </Paper>
             ))
           ) : (
-            <Typography variant="h5" align="center" color="textSecondary" style={{ marginTop: '40px' }}>
-              No hotels match your filters
-            </Typography>
+            <Box 
+  display="flex" 
+  flexDirection="column" 
+  alignItems="center" 
+  justifyContent="center" 
+  style={{ marginTop: '50px', textAlign: 'center' }}
+>
+  <img 
+    src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png" 
+    alt="No results found" 
+    style={{ width: '150px', height: '150px', marginBottom: '20px' }}
+  />
+  <Typography 
+    variant="h5" 
+    color="textSecondary" 
+    style={{ fontWeight: 700, fontSize: '22px', marginBottom: '10px' }}
+  >
+    No hotels found
+  </Typography>
+  <Typography 
+    variant="body1" 
+    color="textSecondary" 
+    style={{ maxWidth: '400px', marginBottom: '20px' }}
+  >
+    Sorry, we couldn't find any hotels matching your criteria. Try adjusting your filters and searching again.
+  </Typography>
+  <Button 
+    variant="contained" 
+    style={{ backgroundColor: '#ff6748', color: '#ffffff', fontWeight: 600 }}
+    onClick={() => {
+      setMinPrice(0);
+      setMaxPrice(10000);
+      setSelectedRating(null);
+      setSelectedPropertyType([]);
+    }}
+  >
+    Reset Filters
+  </Button>
+</Box>
+
           )}
         </Grid>
       </Grid>
