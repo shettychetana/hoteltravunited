@@ -13,36 +13,36 @@ import {
   InputAdornment,
 } from "@mui/material";
 const ReviewPage = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [modalData, setModalData] = useState(null);
+  // const [isModalOpen, setModalOpen] = useState(false);
+  // const [modalData, setModalData] = useState(null);
   const location = useLocation();
   const data = location.state?.data || null; // Access the data passed via navigate
-  console.log(data);
-  const openModal = (data) => {
-    setModalData(data); // Set the data to be displayed in the modal
-    setModalOpen(true);
-  };
+  console.log("reviewpage",data);
+  // const openModal = (data) => {
+  //   setModalData(data); // Set the data to be displayed in the modal
+  //   setModalOpen(true);
+  // };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setModalData(null);
-  };
+  // const closeModal = () => {
+  //   setModalOpen(false);
+  //   setModalData(null);
+  // };
 
-  const getCnpDetails = (alert) => {
-    return alert.oldCnp.ifra ? alert.newCnp : alert.oldCnp;
-  };
+  // const getCnpDetails = (alert) => {
+  //   return alert.oldCnp.ifra ? alert.newCnp : alert.oldCnp;
+  // };
 
-  const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  // const modalStyle = {
+  //   position: 'absolute',
+  //   top: '50%',
+  //   left: '50%',
+  //   transform: 'translate(-50%, -50%)',
+  //   width: 400,
+  //   bgcolor: 'background.paper',
+  //   border: '2px solid #000',
+  //   boxShadow: 24,
+  //   p: 4,
+  // };
   const countries = 
   ﻿[
     {
@@ -1770,7 +1770,7 @@ const ReviewPage = () => {
          
           <div>
             <p className="policy-link" >
-            <Paper elevation={3} style={{ padding: '16px' }}>
+            {/* <Paper elevation={3} style={{ padding: '16px' }}>
         <Typography variant="h4" gutterBottom>
           Review Details
         </Typography>
@@ -1799,10 +1799,10 @@ const ReviewPage = () => {
             No alerts available.
           </Typography>
         )}
-      </Paper>
+      </Paper> */}
 
-      {/* Modal for CNP Details */}
-      <Modal
+      
+      {/* <Modal
         open={isModalOpen}
         onClose={closeModal}
         aria-labelledby="modal-title"
@@ -1814,10 +1814,7 @@ const ReviewPage = () => {
               <Typography id="modal-title" variant="h6" component="h2">
                 CNP Details
               </Typography>
-              {/* <Typography id="modal-description" sx={{ mt: 2 }}>
-                IFRA: {modalData.ifra ? "True" : "False"}
-              </Typography>
-              <Typography>INRA: {modalData.inra ? "True" : "False"}</Typography> */}
+              
               <Typography>Pricing Details:</Typography>
               <ul>
                 {modalData.pd.map((period, index) => (
@@ -1834,7 +1831,7 @@ const ReviewPage = () => {
             <Typography>No data to display</Typography>
           )}
         </Box>
-      </Modal>
+      </Modal> */}
               </p>
             <div>
      

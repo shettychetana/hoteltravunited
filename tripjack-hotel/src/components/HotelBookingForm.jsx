@@ -141,7 +141,7 @@ const HotelBookingForm = () => {
           headers: {
             'Content-Type': 'application/json',
             
-            'apikey': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172`, // Ensure format
+            'apikey': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172`, 
           },
           body: JSON.stringify({ searchId }),
         });
