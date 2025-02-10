@@ -242,7 +242,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
         </Typography>
         <Typography variant="body2" color="textSecondary">
           {hotelDetail.hotel.ops[0].ris[0]?.tfcs?.TF === 0
-            ? 'Non-Refundable'
+            ? 'Refundable policy'
             : 'Free Cancellation'}
         </Typography>
         <Divider style={{ margin: '16px 0' }} />
@@ -692,20 +692,3 @@ const navigateToReviewPage = async (hotelId, roomId) => {
 };
 
 export default HotelDetail;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

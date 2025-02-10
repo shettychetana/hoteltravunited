@@ -2403,382 +2403,642 @@
 
 
 
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+// import React, { useState } from "react";
+// import { useLocation } from "react-router-dom";
+// import {
+//   Card,
+//   CardContent,
+//   Typography,
+//   Rating,
+//   Button,
+//   Chip,
+//   Grid,
+//   Box,
+//   List,
+//   ListItem,
+//   ListItemText,
+//   Divider,
+//   TextField,
+//   MenuItem
+// } from "@mui/material";
+
+// const ReviewPage = () => {
+//   const location = useLocation();
+//   const data = location.state?.data || null;
+
+//   // Extract query details (if available) from API data.
+//   const queryData = data?.query || {};
+//   const roomQuery = queryData.roomInfo?.[0] || {};
+
+//   const initialAdultsCount = roomQuery.numberOfAdults || 1;
+//   const initialChildrenCount = roomQuery.numberOfChild || 0;
+//   const initialChildAges = roomQuery.childAge || [];
+
+//   // State for adult guest details.
+//   const [adultGuests, setAdultGuests] = useState(() => {
+//     return new Array(initialAdultsCount).fill(null).map(() => ({
+//       title: "Mr",
+//       firstName: "",
+//       lastName: ""
+//     }));
+//   });
+
+//   // State for child guest details.
+//   const [childGuests, setChildGuests] = useState(() => {
+//     return new Array(initialChildrenCount).fill(null).map((_, index) => ({
+//       // Default prefix is set to "Master"; user can select "Miss" if needed.
+//       prefix: "Master",
+//       firstName: "",
+//       lastName: "",
+//       age: initialChildAges[index] || ""
+//     }));
+//   });
+
+//   // Additional states.
+//   const [contactDetails, setContactDetails] = useState({
+//     code: "+91",
+//     mobile: ""
+//   });
+//   const [email, setEmail] = useState("");
+//   const [specialRequests, setSpecialRequests] = useState("");
+
+//   // Handler for updating an adult guest field.
+//   const handleAdultChange = (index, field, value) => {
+//     setAdultGuests((prev) => {
+//       const newGuests = [...prev];
+//       newGuests[index] = { ...newGuests[index], [field]: value };
+//       return newGuests;
+//     });
+//   };
+
+//   // Handler for adding an additional adult guest.
+//   const handleAddAdultGuest = () => {
+//     setAdultGuests((prev) => [
+//       ...prev,
+//       { title: "Mr", firstName: "", lastName: "" }
+//     ]);
+//   };
+
+//   // Handler for updating a child guest field.
+//   const handleChildChange = (index, field, value) => {
+//     setChildGuests((prev) => {
+//       const newGuests = [...prev];
+//       newGuests[index] = { ...newGuests[index], [field]: value };
+//       return newGuests;
+//     });
+//   };
+
+//   // Handler for updating contact details.
+//   const handleContactChange = (field, value) => {
+//     setContactDetails((prev) => ({
+//       ...prev,
+//       [field]: value
+//     }));
+//   };
+
+//   // Early return if data is not available.
+//   if (!data) return <Typography>Loading...</Typography>;
+
+//   // Other API data (for hotel details, pricing, etc.)
+//   const { hInfo, bookingId } = data;
+//   const roomInfo = hInfo.ops[0].ris[0];
+//   const cancellationPolicy = hInfo.ops[0].cnp;
+
+//   return (
+//     <div>
+//       {/* Booking Details Card */}
+//       <Card sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
+//         <CardContent>
+//           {/* Hotel Header Section */}
+//           <Typography variant="h4" gutterBottom>
+//             {hInfo.name}
+//             <Rating value={hInfo.rt} readOnly sx={{ ml: 2 }} />
+//           </Typography>
+//           <Typography variant="body2" color="text.secondary">
+//             {hInfo.ad.adr}, {hInfo.ad.ctn}, {hInfo.ad.cn}
+//           </Typography>
+//           <Divider sx={{ my: 3 }} />
+//           {/* Price Breakdown */}
+//           <Typography variant="h6" gutterBottom>
+//             Price Breakdown
+//           </Typography>
+//           <Grid container spacing={2}>
+//             <Grid item xs={6}>
+//               <Typography>Room Price (1 Night)</Typography>
+//               <Typography>Taxes & Fees</Typography>
+//               <Typography variant="body2" color="text.secondary">
+//                 Includes ₹{roomInfo.tafcs.TAF.SAC} taxes
+//               </Typography>
+//             </Grid>
+//             <Grid item xs={6} textAlign="right">
+//               <Typography>₹{roomInfo.tp.toFixed(2)}</Typography>
+//               <Typography>₹{roomInfo.tafcs.TAF.TSF.toFixed(2)}</Typography>
+//             </Grid>
+//           </Grid>
+//           <Divider sx={{ my: 3 }} />
+//           {/* Total Price */}
+//           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+//             <Typography variant="h6">Total Amount</Typography>
+//             <Typography variant="h6">
+//               ₹{(roomInfo.tp + roomInfo.tafcs.TAF.TSF).toFixed(2)}
+//             </Typography>
+//           </Box>
+//           {/* Room Details */}
+//           <Typography variant="h6" gutterBottom>
+//             Room Details
+//           </Typography>
+//           <Typography>
+//             {roomInfo.rc} - {roomInfo.rt}
+//           </Typography>
+//           <Chip
+//             label={`${roomInfo.adt} Adult, ${roomInfo.chd} Child`}
+//             sx={{ mt: 1 }}
+//           />
+//           <Typography variant="body2" sx={{ mt: 1 }}>
+//             Meal Plan: {roomInfo.mb}
+//           </Typography>
+//           {/* Cancellation Policy */}
+//           <Box sx={{ mt: 3, p: 2, bgcolor: "#f5f5f5" }}>
+//             <Typography variant="h6" gutterBottom>
+//               Cancellation Policy
+//             </Typography>
+//             <Typography variant="body2">
+//               {cancellationPolicy?.scnp
+//                 ? cancellationPolicy.scnp
+//                     .split("CANCELLATION_POLICY :")
+//                     .join("\n• ")
+//                 : "No cancellation policy available"}
+//             </Typography>
+//           </Box>
+//           {/* Special Requests */}
+//           <TextField
+//             fullWidth
+//             label="Special Requests"
+//             multiline
+//             rows={4}
+//             sx={{ mt: 3 }}
+//             placeholder="Special requests are subject to availability..."
+//             value={specialRequests}
+//             onChange={(e) => setSpecialRequests(e.target.value)}
+//           />
+//           {/* Payment Section */}
+//           <Box sx={{ mt: 3, textAlign: "right" }}>
+//             <Button variant="contained" size="large" sx={{ px: 4 }}>
+//               Proceed to Payment
+//             </Button>
+//             <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+//               Booking ID: {bookingId}
+//             </Typography>
+//           </Box>
+//           {/* Important Information */}
+//           <Box sx={{ mt: 4, pt: 2, borderTop: 1 }}>
+//             <Typography variant="h6" gutterBottom>
+//               Important Information
+//             </Typography>
+//             <List dense>
+//               <ListItem>
+//                 <ListItemText
+//                   primary="ID Requirements"
+//                   secondary="Passport, Aadhar, Driving License accepted"
+//                 />
+//               </ListItem>
+//               <ListItem>
+//                 <ListItemText
+//                   primary="Smoking Policy"
+//                   secondary="Smoking strictly prohibited in premises"
+//                 />
+//               </ListItem>
+//             </List>
+//           </Box>
+//         </CardContent>
+//       </Card>
+
+//       {/* Guest Details Card */}
+//       <Card sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
+//         <CardContent>
+//           <Typography variant="h6" gutterBottom>
+//             Guest Details
+//           </Typography>
+//           <Typography variant="subtitle1" sx={{ mb: 2 }}>
+//             For Room 1 - Executive Room - 1 King Bed (ROOM ONLY)
+//           </Typography>
+
+//           {/* Adult Guests Section */}
+//           {adultGuests.map((guest, index) => (
+//             <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
+//               <Grid item xs={2}>
+//                 <TextField
+//                   select
+//                   fullWidth
+//                   label="Title"
+//                   value={guest.title}
+//                   onChange={(e) =>
+//                     handleAdultChange(index, "title", e.target.value)
+//                   }
+//                 >
+//                   <MenuItem value="Mr">Mr</MenuItem>
+//                   <MenuItem value="Mrs">Mrs</MenuItem>
+//                   <MenuItem value="Ms">Ms</MenuItem>
+//                 </TextField>
+//               </Grid>
+//               <Grid item xs={5}>
+//                 <TextField
+//                   fullWidth
+//                   label={
+//                     index === 0
+//                       ? "Lead Guest First Name"
+//                       : `Guest ${index + 1} First Name`
+//                   }
+//                   value={guest.firstName}
+//                   onChange={(e) =>
+//                     handleAdultChange(index, "firstName", e.target.value)
+//                   }
+//                 />
+//               </Grid>
+//               <Grid item xs={5}>
+//                 <TextField
+//                   fullWidth
+//                   label={
+//                     index === 0
+//                       ? "Lead Guest Last Name"
+//                       : `Guest ${index + 1} Last Name`
+//                   }
+//                   value={guest.lastName}
+//                   onChange={(e) =>
+//                     handleAdultChange(index, "lastName", e.target.value)
+//                   }
+//                 />
+//               </Grid>
+//             </Grid>
+//           ))}
+//           {/* If only one adult is present, show "Add More Guest" button */}
+//           {adultGuests.length === 1 && (
+//             <Box sx={{ mb: 3 }}>
+//               <Button variant="outlined" onClick={handleAddAdultGuest}>
+//                 Add More Guest
+//               </Button>
+//             </Box>
+//           )}
+
+//           {/* Child Guests Section */}
+//           {childGuests.length > 0 && (
+//             <>
+//               <Divider sx={{ my: 3 }} />
+//               <Typography variant="h6" gutterBottom>
+//                 Child Details
+//               </Typography>
+//               {childGuests.map((child, index) => (
+//                 <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
+//                   <Grid item xs={3}>
+//                     <TextField
+//                       select
+//                       fullWidth
+//                       label="Prefix"
+//                       value={child.prefix}
+//                       onChange={(e) =>
+//                         handleChildChange(index, "prefix", e.target.value)
+//                       }
+//                     >
+//                       <MenuItem value="Master">Master</MenuItem>
+//                       <MenuItem value="Miss">Miss</MenuItem>
+//                     </TextField>
+//                   </Grid>
+//                   <Grid item xs={3}>
+//                     <TextField
+//                       fullWidth
+//                       label="First Name"
+//                       value={child.firstName}
+//                       onChange={(e) =>
+//                         handleChildChange(index, "firstName", e.target.value)
+//                       }
+//                     />
+//                   </Grid>
+//                   <Grid item xs={3}>
+//                     <TextField
+//                       fullWidth
+//                       label="Last Name"
+//                       value={child.lastName}
+//                       onChange={(e) =>
+//                         handleChildChange(index, "lastName", e.target.value)
+//                       }
+//                     />
+//                   </Grid>
+//                   <Grid item xs={3}>
+//                     <TextField
+//                       fullWidth
+//                       label="Age"
+//                       value={child.age}
+//                       onChange={(e) =>
+//                         handleChildChange(index, "age", e.target.value)
+//                       }
+//                     />
+//                   </Grid>
+//                 </Grid>
+//               ))}
+//             </>
+//           )}
+
+//           <Divider sx={{ my: 3 }} />
+//           {/* Contact Details */}
+//           <Typography variant="h6" gutterBottom>
+//             Contact Details
+//           </Typography>
+//           <Grid container spacing={2} sx={{ mb: 3 }}>
+//             <Grid item xs={4}>
+//               <TextField
+//                 select
+//                 fullWidth
+//                 label="Code"
+//                 value={contactDetails.code}
+//                 onChange={(e) => handleContactChange("code", e.target.value)}
+//               >
+//                 <MenuItem value="+91">India (+91)</MenuItem>
+//                 {/* Add additional country codes as needed */}
+//               </TextField>
+//             </Grid>
+//             <Grid item xs={8}>
+//               <TextField
+//                 fullWidth
+//                 label="Mobile No."
+//                 value={contactDetails.mobile}
+//                 onChange={(e) =>
+//                   handleContactChange("mobile", e.target.value)
+//                 }
+//               />
+//             </Grid>
+//           </Grid>
+//           <TextField
+//             fullWidth
+//             label="Email ID"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//             sx={{ mb: 3 }}
+//           />
+//         </CardContent>
+//       </Card>
+//     </div>
+//   );
+// };
+
+// export default ReviewPage;
+
+// import React from "react";
+// import { useLocation } from "react-router-dom";
+// import {
+//   Container,
+//   Card,
+//   CardContent,
+//   Typography,
+//   Grid,
+//   CardMedia,
+//   List,
+//   ListItem,
+//   ListItemText,
+//   Divider,
+//   Chip,
+//   Link,
+//   Stack,
+//   Box,
+//   Button,
+// } from "@mui/material";
+
+// const primaryColor = "#FF6748";
+
+// const ReviewPage = () => {
+//   const location = useLocation();
+//   const data = location.state?.data || null;
+
+//   if (!data) {
+//     return <Typography variant="h6" align="center" sx={{ mt: 5 }}>No hotel data available</Typography>;
+//   }
+
+//   const { hInfo, bookingId, conditions } = data;
+//   const { name, rt, ad, ops, tac, inst } = hInfo;
+
+//   return (
+//     <Container maxWidth="md" sx={{ py: 4 }}>
+//       {/* Hotel Information */}
+//       <Card sx={{ my: 3, p: 3, boxShadow: 3, borderRadius: 2 }}>
+//         <CardContent>
+//           <Typography variant="h4" sx={{ color: primaryColor, fontWeight: "bold" }} gutterBottom>
+//             {name}
+//           </Typography>
+//           <Typography variant="h6" color="textSecondary">
+//             ⭐ {rt} / 5
+//           </Typography>
+//           <Typography variant="body1" sx={{ mt: 1 }}>
+//             {ad.adr}, {ad.adr2}, {ad.ctn}, {ad.sn}, {ad.cn} - {ad.postalCode}
+//           </Typography>
+//           <Divider sx={{ my: 2 }} />
+
+//           {/* Terms & Conditions */}
+//           {tac?.sc?.length > 0 && (
+//             <Typography variant="body2">
+//               <strong>Terms & Conditions: </strong>
+//               {tac.sc.map((term, index) => (
+//                 <Link href={term.info} target="_blank" key={index} sx={{ color: primaryColor, textDecoration: "none" }}>
+//                   {term.label}
+//                 </Link>
+//               ))}
+//             </Typography>
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       {/* Room Options */}
+//       {ops.map((option, index) => (
+//         <Card key={index} sx={{ my: 3, p: 3, boxShadow: 3, borderRadius: 2 }}>
+//           <CardContent>
+//             <Typography variant="h5" sx={{ color: "#333", fontWeight: "bold" }}>
+//               Room Options
+//             </Typography>
+//             {option.ris.map((room, i) => (
+//               <Grid container spacing={3} key={i} sx={{ my: 2 }}>
+//                 <Grid item xs={12} sm={4}>
+//                   <CardMedia
+//                     component="img"
+//                     height="200"
+//                     image={room.imgs?.[0]?.url || "https://via.placeholder.com/200"}
+//                     alt={room.rc}
+//                     sx={{ borderRadius: 2 }}
+//                   />
+//                 </Grid>
+//                 <Grid item xs={12} sm={8}>
+//                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{room.rc}</Typography>
+//                   <Typography variant="body2" color="textSecondary">{room.des}</Typography>
+//                   <Typography variant="h6" sx={{ color: primaryColor, fontWeight: "bold", mt: 1 }}>
+//                     ₹{room.tp.toLocaleString()} per night
+//                   </Typography>
+//                   <Box sx={{ display: "flex", flexWrap: "wrap", mt: 1 }}>
+//                     {room.fcs.map((facility, idx) => (
+//                       <Chip key={idx} label={facility} sx={{ m: 0.5, backgroundColor: "#eee" }} />
+//                     ))}
+//                   </Box>
+//                   <Divider sx={{ my: 2 }} />
+//                   <Typography variant="body2">Beds: {room.radi.bds.map((b) => `${b.bc} ${b.bt}`).join(", ")}</Typography>
+//                   <Typography variant="body2">Max Guests: {room.radi.mga} (Adults: {room.radi.maa}, Children: {room.radi.mca})</Typography>
+//                   <Typography variant="body2">Room Size: {room.radi.ar.asf} sq. ft.</Typography>
+//                   {room.rexb.BENEFIT?.[0]?.values && (
+//                     <Box sx={{ display: "flex", flexWrap: "wrap", mt: 1 }}>
+//                       {room.rexb.BENEFIT[0].values.map((benefit, idx) => (
+//                         <Chip key={idx} label={benefit} sx={{ m: 0.5, backgroundColor: "#d1f7c4" }} />
+//                       ))}
+//                     </Box>
+//                   )}
+//                 </Grid>
+//               </Grid>
+//             ))}
+//           </CardContent>
+//         </Card>
+//       ))}
+
+//       {/* Booking Information */}
+//       <Card sx={{ my: 3, p: 3, boxShadow: 3, borderRadius: 2 }}>
+//         <CardContent>
+//           <Typography variant="h5" sx={{ color: "#333", fontWeight: "bold" }}>Booking Information</Typography>
+//           <Typography variant="body1" sx={{ mt: 1 }}>Booking ID: {bookingId}</Typography>
+//           <Typography variant="body2" sx={{ color: conditions.isBA ? "green" : "red" }}>
+//             {conditions.isBA ? "Booking Allowed" : "Booking Not Allowed"}
+//           </Typography>
+//           <Typography variant="body2">Session Time: {conditions.st} seconds</Typography>
+//         </CardContent>
+//       </Card>
+
+//       {/* Proceed Button */}
+//       <Box sx={{ textAlign: "center", my: 4 }}>
+//         <Button variant="contained" sx={{ backgroundColor: primaryColor, color: "#fff", px: 5, py: 1.5 }}>
+//           Proceed to Review
+//         </Button>
+//       </Box>
+//     </Container>
+//   );
+// };
+
+// export default ReviewPage;
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
+  Container,
   Card,
   CardContent,
   Typography,
-  Rating,
-  Button,
-  Chip,
   Grid,
-  Box,
+  CardMedia,
   List,
   ListItem,
   ListItemText,
   Divider,
-  TextField,
-  MenuItem
+  Chip,
+  Link,
+  Stack,
+  Box,
+  Button,
 } from "@mui/material";
+
+const primaryColor = "#FF6748";
 
 const ReviewPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const data = location.state?.data || null;
 
-  // Extract query details (if available) from API data.
-  const queryData = data?.query || {};
-  const roomQuery = queryData.roomInfo?.[0] || {};
-
-  const initialAdultsCount = roomQuery.numberOfAdults || 1;
-  const initialChildrenCount = roomQuery.numberOfChild || 0;
-  const initialChildAges = roomQuery.childAge || [];
-
-  // State for adult guest details.
-  const [adultGuests, setAdultGuests] = useState(() => {
-    return new Array(initialAdultsCount).fill(null).map(() => ({
-      title: "Mr",
-      firstName: "",
-      lastName: ""
-    }));
-  });
-
-  // State for child guest details.
-  const [childGuests, setChildGuests] = useState(() => {
-    return new Array(initialChildrenCount).fill(null).map((_, index) => ({
-      // Default prefix is set to "Master"; user can select "Miss" if needed.
-      prefix: "Master",
-      firstName: "",
-      lastName: "",
-      age: initialChildAges[index] || ""
-    }));
-  });
-
-  // Additional states.
-  const [contactDetails, setContactDetails] = useState({
-    code: "+91",
-    mobile: ""
-  });
-  const [email, setEmail] = useState("");
-  const [specialRequests, setSpecialRequests] = useState("");
-
-  // Handler for updating an adult guest field.
-  const handleAdultChange = (index, field, value) => {
-    setAdultGuests((prev) => {
-      const newGuests = [...prev];
-      newGuests[index] = { ...newGuests[index], [field]: value };
-      return newGuests;
-    });
+  if (!data) {
+    return <Typography variant="h6" align="center" sx={{ mt: 5 }}>No hotel data available</Typography>;
+  }
+ const queryData=data.query;
+  const { hInfo, bookingId, conditions } = data;
+  const { name, rt, ad, ops, tac, inst, pops } = hInfo;
+ const checkincheckout= data.query;
+ console.log("not",checkincheckout);
+  const handleBooking = (amount) => {
+    navigate("/booking", { state: { bookingId, amount,checkincheckout } });
   };
-
-  // Handler for adding an additional adult guest.
-  const handleAddAdultGuest = () => {
-    setAdultGuests((prev) => [
-      ...prev,
-      { title: "Mr", firstName: "", lastName: "" }
-    ]);
-  };
-
-  // Handler for updating a child guest field.
-  const handleChildChange = (index, field, value) => {
-    setChildGuests((prev) => {
-      const newGuests = [...prev];
-      newGuests[index] = { ...newGuests[index], [field]: value };
-      return newGuests;
-    });
-  };
-
-  // Handler for updating contact details.
-  const handleContactChange = (field, value) => {
-    setContactDetails((prev) => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  // Early return if data is not available.
-  if (!data) return <Typography>Loading...</Typography>;
-
-  // Other API data (for hotel details, pricing, etc.)
-  const { hInfo, bookingId } = data;
-  const roomInfo = hInfo.ops[0].ris[0];
-  const cancellationPolicy = hInfo.ops[0].cnp;
 
   return (
-    <div>
-      {/* Booking Details Card */}
-      <Card sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      {/* Hotel Information */}
+      <Card sx={{ my: 3, p: 3, boxShadow: 3, borderRadius: 2 }}>
         <CardContent>
-          {/* Hotel Header Section */}
-          <Typography variant="h4" gutterBottom>
-            {hInfo.name}
-            <Rating value={hInfo.rt} readOnly sx={{ ml: 2 }} />
+          <Typography variant="h4" sx={{ color: primaryColor, fontWeight: "bold" }} gutterBottom>
+            {name}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {hInfo.ad.adr}, {hInfo.ad.ctn}, {hInfo.ad.cn}
+          <Typography variant="h6" color="textSecondary">
+            ⭐ {rt} / 5
           </Typography>
-          <Divider sx={{ my: 3 }} />
-          {/* Price Breakdown */}
-          <Typography variant="h6" gutterBottom>
-            Price Breakdown
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            {ad.adr}, {ad.adr2}, {ad.ctn}, {ad.sn}, {ad.cn} - {ad.postalCode}
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography>Room Price (1 Night)</Typography>
-              <Typography>Taxes & Fees</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Includes ₹{roomInfo.tafcs.TAF.SAC} taxes
-              </Typography>
-            </Grid>
-            <Grid item xs={6} textAlign="right">
-              <Typography>₹{roomInfo.tp.toFixed(2)}</Typography>
-              <Typography>₹{roomInfo.tafcs.TAF.TSF.toFixed(2)}</Typography>
-            </Grid>
-          </Grid>
-          <Divider sx={{ my: 3 }} />
-          {/* Total Price */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-            <Typography variant="h6">Total Amount</Typography>
-            <Typography variant="h6">
-              ₹{(roomInfo.tp + roomInfo.tafcs.TAF.TSF).toFixed(2)}
-            </Typography>
-          </Box>
-          {/* Room Details */}
-          <Typography variant="h6" gutterBottom>
-            Room Details
-          </Typography>
-          <Typography>
-            {roomInfo.rc} - {roomInfo.rt}
-          </Typography>
-          <Chip
-            label={`${roomInfo.adt} Adult, ${roomInfo.chd} Child`}
-            sx={{ mt: 1 }}
-          />
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Meal Plan: {roomInfo.mb}
-          </Typography>
-          {/* Cancellation Policy */}
-          <Box sx={{ mt: 3, p: 2, bgcolor: "#f5f5f5" }}>
-            <Typography variant="h6" gutterBottom>
-              Cancellation Policy
-            </Typography>
+          <Divider sx={{ my: 2 }}/>
+
+          {/* Terms & Conditions */}
+          {tac?.sc?.length > 0 && (
             <Typography variant="body2">
-              {cancellationPolicy?.scnp
-                ? cancellationPolicy.scnp
-                    .split("CANCELLATION_POLICY :")
-                    .join("\n• ")
-                : "No cancellation policy available"}
-            </Typography>
-          </Box>
-          {/* Special Requests */}
-          <TextField
-            fullWidth
-            label="Special Requests"
-            multiline
-            rows={4}
-            sx={{ mt: 3 }}
-            placeholder="Special requests are subject to availability..."
-            value={specialRequests}
-            onChange={(e) => setSpecialRequests(e.target.value)}
-          />
-          {/* Payment Section */}
-          <Box sx={{ mt: 3, textAlign: "right" }}>
-            <Button variant="contained" size="large" sx={{ px: 4 }}>
-              Proceed to Payment
-            </Button>
-            <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-              Booking ID: {bookingId}
-            </Typography>
-          </Box>
-          {/* Important Information */}
-          <Box sx={{ mt: 4, pt: 2, borderTop: 1 }}>
-            <Typography variant="h6" gutterBottom>
-              Important Information
-            </Typography>
-            <List dense>
-              <ListItem>
-                <ListItemText
-                  primary="ID Requirements"
-                  secondary="Passport, Aadhar, Driving License accepted"
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="Smoking Policy"
-                  secondary="Smoking strictly prohibited in premises"
-                />
-              </ListItem>
-            </List>
-          </Box>
-        </CardContent>
-      </Card>
-
-      {/* Guest Details Card */}
-      <Card sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Guest Details
-          </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 2 }}>
-            For Room 1 - Executive Room - 1 King Bed (ROOM ONLY)
-          </Typography>
-
-          {/* Adult Guests Section */}
-          {adultGuests.map((guest, index) => (
-            <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
-              <Grid item xs={2}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Title"
-                  value={guest.title}
-                  onChange={(e) =>
-                    handleAdultChange(index, "title", e.target.value)
-                  }
-                >
-                  <MenuItem value="Mr">Mr</MenuItem>
-                  <MenuItem value="Mrs">Mrs</MenuItem>
-                  <MenuItem value="Ms">Ms</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={5}>
-                <TextField
-                  fullWidth
-                  label={
-                    index === 0
-                      ? "Lead Guest First Name"
-                      : `Guest ${index + 1} First Name`
-                  }
-                  value={guest.firstName}
-                  onChange={(e) =>
-                    handleAdultChange(index, "firstName", e.target.value)
-                  }
-                />
-              </Grid>
-              <Grid item xs={5}>
-                <TextField
-                  fullWidth
-                  label={
-                    index === 0
-                      ? "Lead Guest Last Name"
-                      : `Guest ${index + 1} Last Name`
-                  }
-                  value={guest.lastName}
-                  onChange={(e) =>
-                    handleAdultChange(index, "lastName", e.target.value)
-                  }
-                />
-              </Grid>
-            </Grid>
-          ))}
-          {/* If only one adult is present, show "Add More Guest" button */}
-          {adultGuests.length === 1 && (
-            <Box sx={{ mb: 3 }}>
-              <Button variant="outlined" onClick={handleAddAdultGuest}>
-                Add More Guest
-              </Button>
-            </Box>
-          )}
-
-          {/* Child Guests Section */}
-          {childGuests.length > 0 && (
-            <>
-              <Divider sx={{ my: 3 }} />
-              <Typography variant="h6" gutterBottom>
-                Child Details
-              </Typography>
-              {childGuests.map((child, index) => (
-                <Grid container spacing={2} sx={{ mb: 3 }} key={index}>
-                  <Grid item xs={3}>
-                    <TextField
-                      select
-                      fullWidth
-                      label="Prefix"
-                      value={child.prefix}
-                      onChange={(e) =>
-                        handleChildChange(index, "prefix", e.target.value)
-                      }
-                    >
-                      <MenuItem value="Master">Master</MenuItem>
-                      <MenuItem value="Miss">Miss</MenuItem>
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      value={child.firstName}
-                      onChange={(e) =>
-                        handleChildChange(index, "firstName", e.target.value)
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      value={child.lastName}
-                      onChange={(e) =>
-                        handleChildChange(index, "lastName", e.target.value)
-                      }
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      label="Age"
-                      value={child.age}
-                      onChange={(e) =>
-                        handleChildChange(index, "age", e.target.value)
-                      }
-                    />
-                  </Grid>
-                </Grid>
+              <strong>Terms & Conditions: </strong>
+              {tac.sc.map((term, index) => (
+                <Link href={term.info} target="_blank" key={index} sx={{ color: primaryColor, textDecoration: "none" }}>
+                  {term.label}
+                </Link>
               ))}
-            </>
+            </Typography>
           )}
-
-          <Divider sx={{ my: 3 }} />
-          {/* Contact Details */}
-          <Typography variant="h6" gutterBottom>
-            Contact Details
-          </Typography>
-          <Grid container spacing={2} sx={{ mb: 3 }}>
-            <Grid item xs={4}>
-              <TextField
-                select
-                fullWidth
-                label="Code"
-                value={contactDetails.code}
-                onChange={(e) => handleContactChange("code", e.target.value)}
-              >
-                <MenuItem value="+91">India (+91)</MenuItem>
-                {/* Add additional country codes as needed */}
-              </TextField>
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                fullWidth
-                label="Mobile No."
-                value={contactDetails.mobile}
-                onChange={(e) =>
-                  handleContactChange("mobile", e.target.value)
-                }
-              />
-            </Grid>
-          </Grid>
-          <TextField
-            fullWidth
-            label="Email ID"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{ mb: 3 }}
-          />
         </CardContent>
       </Card>
-    </div>
+
+      {/* Room Options */}
+      {ops.map((option, index) => (
+        <Card key={index} sx={{ my: 3, p: 3, boxShadow: 3, borderRadius: 2 }}>
+          <CardContent>
+            <Typography variant="h5" sx={{ color: "#333", fontWeight: "bold" }}>
+              Room Options
+            </Typography>
+            {option.ris.map((room, i) => (
+              <Grid container spacing={3} key={i} sx={{ my: 2 }}>
+                <Grid item xs={12} sm={4}>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={room.imgs?.[0]?.url || "https://via.placeholder.com/200"}
+                    alt={room.rc}
+                    sx={{ borderRadius: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>{room.rc}</Typography>
+                  <Typography variant="body2" color="textSecondary">{room.des}</Typography>
+                  <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+                    {pops.map((pop, idx) => (
+                      <Button
+                        key={idx}
+                        variant="contained"
+                        sx={{ backgroundColor: primaryColor, color: "#fff" }}
+                        onClick={() => handleBooking(pop.tpc)}
+                      >
+                        {pop.fc.join(", ")} - ₹{pop.tpc.toLocaleString()}
+                      </Button>
+                    ))}
+                  </Box>
+                  {/* <Divider sx={{ my: 2 }} />
+                  <Typography variant="body2">
+  Beds: {room?.radi?.bds?.map((b) => `${b.bc} ${b.bt}`).join(", ") || "N/A"}
+</Typography>
+
+                  <Typography variant="body2">Max Guests: {room.radi.mga} (Adults: {room.radi.maa}, Children: {room.radi.mca})</Typography>
+                  <Typography variant="body2">Room Size: {room.radi.ar.asf} sq. ft.</Typography>
+                  {room.rexb.BENEFIT?.[0]?.values && (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", mt: 1 }}>
+                      {room.rexb.BENEFIT[0].values.map((benefit, idx) => (
+                        <Chip key={idx} label={benefit} sx={{ m: 0.5, backgroundColor: "#d1f7c4" }} />
+                      ))}
+                    </Box>
+                  )} */}
+                </Grid>
+              </Grid>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
+    </Container>
   );
 };
 
 export default ReviewPage;
-
