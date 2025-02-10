@@ -16,10 +16,11 @@ const Footer = () => {
  
 </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-          Travunited of India Pvt. Ltd. provide excellent service for all travel
+          Travunited of India Pvt. Ltd. provide excellent services for all travel
            related services around the globe such as Air Tickets, Holiday Packages, 
            Tour Packages, Hajj & Umrah Packages, Visa & Passport, Travel Insurance etc
           </Typography>
+          <button>j</button>
           <Box mt={2}>
             <IconButton>
               <Twitter />
