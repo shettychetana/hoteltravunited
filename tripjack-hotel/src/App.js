@@ -31,6 +31,7 @@
 
 // export default App;
 import React from 'react';
+
 import './App.css';
 import HotelBookingForm from './components/HotelBookingForm.jsx';
 import Header from './components/Header.jsx';

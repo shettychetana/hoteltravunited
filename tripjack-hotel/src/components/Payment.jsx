@@ -133,66 +133,121 @@
 // export default Payment;
 import { useEffect } from "react";
 import axios from "axios";
-
+import React from "react";
 const Payment = () => {
-  const loadRazorpay = () => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-  };
+  const [responseId, setResponseId] = React.useState("");
+  const [responseState, setResponseState] = React.useState([]);
 
-  useEffect(() => {
-    loadRazorpay();
-  }, []);
+  const loadScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
 
-  const handlePayment = async () => {
-    try {
-      const { data } = await axios.post("http://localhost:3000/create-order", {
-        amount: 500, // Amount in INR
-      });
+      script.src = src;
 
-      const options = {
-        key: "rzp_test_7knSOHZmMk60tN", // Use only the Key ID here
-        amount: data.amount,
-        currency: data.currency,
-        name: "Your Company",
-        description: "Payment for Order #123",
-        order_id: data.id,
-        handler: async function (response) {
-          const verifyRes = await axios.post("http://localhost:5000/verify-payment", {
-            order_id: data.id,
-            payment_id: response.razorpay_payment_id,
-            signature: response.razorpay_signature,
-          });
+      script.onload = () => {
+        resolve(true)
+      }
+      script.onerror = () => {
+        resolve(false)
+      }
 
-          if (verifyRes.data.success) {
-            alert("Payment Successful!");
-          } else {
-            alert("Payment Verification Failed");
-          }
-        },
-        prefill: {
-          name: "John Doe",
-          email: "johndoe@example.com",
-          contact: "9999999999",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
+      document.body.appendChild(script);
+    })
+  }
 
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-    } catch (error) {
-      console.error("Payment error:", error);
+  const createRazorpayOrder = (amount) => {
+    let data = JSON.stringify({
+      amount: amount * 100,
+      currency: "INR"
+    })
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "http://localhost:3000/orders",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
     }
-  };
 
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data))
+      handleRazorpayScreen(response.data.amount)
+    })
+    .catch((error) => {
+      console.log("error at", error)
+    })
+  }
+
+  const handleRazorpayScreen = async(amount) => {
+    const res = await loadScript("https:/checkout.razorpay.com/v1/checkout.js")
+
+    if (!res) {
+      alert("Some error at razorpay screen loading")
+      return;
+    }
+
+    const options = {
+      key: 'rzp_test_GcZZFDPP0jHtC4',
+      amount: amount,
+      currency: 'INR',
+      name: "papaya coders",
+      description: "payment to papaya coders",
+      image: "https://papayacoders.com/demo.png",
+      handler: function (response){
+        setResponseId(response.razorpay_payment_id)
+      },
+      prefill: {
+        name: "papaya coders",
+        email: "papayacoders@gmail.com"
+      },
+      theme: {
+        color: "#F4C430"
+      }
+    }
+
+    const paymentObject = new window.Razorpay(options)
+    paymentObject.open()
+  }
+
+  const paymentFetch = (e) => {
+    e.preventDefault();
+
+    const paymentId = e.target.paymentId.value;
+
+    axios.get(`http://localhost:3000/payment/${paymentId}`)
+    .then((response) => {
+      console.log(response.data);
+      setResponseState(response.data)
+    })
+    .catch((error) => {
+      console.log("error occures", error)
+    })
+  }
+
+ 
+
+  
   return (
     <div>
       <h2>Razorpay Payment</h2>
-      <button onClick={handlePayment}>Pay Now</button>
+      <button onClick={() => createRazorpayOrder(100)}>Payment of 100Rs.</button>
+      {responseId && <p>{responseId}</p>}
+      <h1>This is payment verification form</h1>
+      <form onSubmit={paymentFetch}>
+        <input type="text" name="paymentId" />
+        <button type="submit">Fetch Payment</button>
+        {responseState.length !==0 && (
+          <ul>
+            <li>Amount: {responseState.amount / 100} Rs.</li>
+            <li>Currency: {responseState.currency}</li>
+            <li>Status: {responseState.status}</li>
+            <li>Method: {responseState.method}</li>
+          </ul>
+        )}
+      </form>
     </div>
   );
 };
