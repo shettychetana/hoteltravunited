@@ -43,6 +43,7 @@ import PopularPlaces from './components/PopularPlaces.jsx';
 import Testimonial from './components/Testimonial.jsx';
 import Footer from './components/Footer.jsx';
 import BookingPage from './components/BookingPage';
+import Payment from './components/Payment';
 function App() {
   return (
     <div className="App">
@@ -66,6 +67,7 @@ function App() {
           <Route path="/hotelDetail" element={<HotelDetail />} />
           <Route path="/review/:hotelId/:roomId" element={<ReviewPage />} />
           <Route path="/booking" element={<BookingPage />} />
+          <Route path="/payment" element={<Payment />} />
         </Routes>
         <Footer>
         <Footer/>

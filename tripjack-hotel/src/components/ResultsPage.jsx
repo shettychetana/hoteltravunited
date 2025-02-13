@@ -23,19 +23,33 @@ const ResultsPage = () => {
 
   // Extract unique property types
   const propertyTypes = [...new Set(hotels.map(hotel => hotel.pt))];
+  const handleRatingChange = (rating) => {
+    setSelectedRating(prev => (prev === rating ? null : rating));
+  };
   
   // Update filters whenever criteria changes
   useEffect(() => {
+    if (!hotels || hotels.length === 0) return;
+  
+    const prices = hotels.map(hotel => hotel.pops[0]?.tpc || 0);
+    const min = Math.floor(Math.min(...prices));
+    const max = Math.ceil(Math.max(...prices));
+  
+    // Update min/max price only if values are different
+    setMinPrice(prevMin => (prevMin !== min ? min : prevMin));
+    setMaxPrice(prevMax => (prevMax !== max ? max : prevMax));
+  
     const filtered = hotels.filter(hotel => {
       const hotelPrice = hotel.pops[0]?.tpc || 0;
       const priceInRange = hotelPrice >= minPrice && hotelPrice <= maxPrice;
       const ratingMatches = selectedRating === null || hotel.rt === selectedRating;
       const propertyMatches = selectedPropertyType.length === 0 || selectedPropertyType.includes(hotel.pt);
-  
       return priceInRange && ratingMatches && propertyMatches;
     });
   
-    setFilteredHotels(filtered);
+    // Only update state if the filtered result is different to prevent infinite loops
+    setFilteredHotels(prevFiltered => (JSON.stringify(prevFiltered) !== JSON.stringify(filtered) ? filtered : prevFiltered));
+  
   }, [hotels, minPrice, maxPrice, selectedRating, selectedPropertyType]);
   
   // Handle property type change
@@ -48,42 +62,54 @@ const ResultsPage = () => {
   };
   // Initialize price range from data
   useEffect(() => {
-    if (hotels.length > 0) {
-      const prices = hotels.map(hotel => hotel.pops[0]?.tpc || 0);
-      const min = Math.floor(Math.min(...prices));
-      const max = Math.ceil(Math.max(...prices));
-      setMinPrice(min);
-      setMaxPrice(max);
-    }
+    if (!hotels || hotels.length === 0) return;
+  
+    const prices = hotels.map(hotel => hotel.pops[0]?.tpc || 0);
+    const min = Math.floor(Math.min(...prices));
+    const max = Math.ceil(Math.max(...prices));
+  
+    // ✅ Only update state if the values actually change
+    setMinPrice(prev => (prev !== min ? min : prev));
+    setMaxPrice(prev => (prev !== max ? max : prev));
   }, [hotels]);
+  
 
   // Update filters whenever criteria changes
   useEffect(() => {
+    if (!hotels || hotels.length === 0) return;
+  
     const filtered = hotels.filter(hotel => {
       const hotelPrice = hotel.pops[0]?.tpc || 0;
       const priceInRange = hotelPrice >= minPrice && hotelPrice <= maxPrice;
       const ratingMatches = selectedRating === null || hotel.rt === selectedRating;
-      //const cancellationMatches = !freeCancellation || hotel.ifca;
-      
-      return priceInRange && ratingMatches ;
+      const propertyMatches = selectedPropertyType.length === 0 || selectedPropertyType.includes(hotel.pt);
+      return priceInRange && ratingMatches && propertyMatches;
     });
-    
-    setFilteredHotels(filtered);
-  }, [hotels, minPrice, maxPrice, selectedRating]);
-
+  
+    // ✅ Only update state if filtered hotels actually change
+    if (JSON.stringify(filteredHotels) !== JSON.stringify(filtered)) {
+      setFilteredHotels(filtered);
+    }
+  }, [hotels, minPrice, maxPrice, selectedRating, selectedPropertyType]);
+  
   const handlePriceChange = (e) => {
     const value = Math.max(0, Number(e.target.value));
+  
     if (e.target.name === "minPrice") {
-      setMinPrice(Math.min(value, maxPrice));
+      if (value !== minPrice) setMinPrice(value);
+      if (value > maxPrice) setMaxPrice(value);
     } else if (e.target.name === "maxPrice") {
-      setMaxPrice(Math.max(value, minPrice));
+      if (value !== maxPrice) setMaxPrice(value);
+      if (value < minPrice) setMinPrice(value);
     }
   };
+  
+  
 
   const handleSelectRoom = async (hotelId) => {
     try {
-      const apiUrl = "https://tripjack.com/hms/v1/hotelDetail-search";
-      const apiKey = "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172";
+      const apiUrl = "https://apitest.tripjack.com/hms/v1/hotelDetail-search";
+      const apiKey = "812106087da1ea-c4d9-4f3b-86a4-6d044a812964";
       const response = await axios.post(apiUrl, { id: hotelId }, {
         headers: { "Content-Type": "application/json", apikey: apiKey }
       });
@@ -138,9 +164,10 @@ const ResultsPage = () => {
                 key={rating}
                 control={
                   <Checkbox
-                    checked={selectedRating === rating}
-                    onChange={() => setSelectedRating(prev => prev === rating ? null : rating)}
-                  />
+  checked={selectedRating === rating}
+  onChange={() => handleRatingChange(rating)}
+/>
+
                 }
                 label={`${rating} STAR${rating !== 1&& rating!==0 ? "S" : ""}`}
               />

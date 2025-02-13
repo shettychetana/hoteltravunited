@@ -97,18 +97,18 @@ const HotelBookingForm = () => {
   
     try {
       const response = await axios.post(
-        'https://tripjack.com/hms/v1/hotel-searchquery-list',
+        'https://apitest.tripjack.com/hms/v1/hotel-searchquery-list',
         requestBody,
         {
           headers: {
             "Content-Type": "application/json",
-            "apikey": "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172",
+            "apikey": "812106087da1ea-c4d9-4f3b-86a4-6d044a812964",
           },
         }
       );
   
       const searchIds = response.data?.searchIds || [];
-      setSearchIds(searchIds); // Store search IDs
+      setSearchIds(searchIds); 
       console.log("Search IDs Captured:", searchIds);
   
       // Call the second API for each searchId
@@ -133,7 +133,7 @@ const HotelBookingForm = () => {
     //3api hotel search
     const fetchHotelSearch = async (searchId) => {
       const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
-      const url = 'https://tripjack.com/hms/v1/hotel-search';
+      const url = 'https://apitest.tripjack.com/hms/v1/hotel-search';
     
       try {
         const response = await fetch(url, {
@@ -141,7 +141,7 @@ const HotelBookingForm = () => {
           headers: {
             'Content-Type': 'application/json',
             
-            'apikey': ` 610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172`, 
+            'apikey': ` 812106087da1ea-c4d9-4f3b-86a4-6d044a812964`, 
           },
           body: JSON.stringify({ searchId }),
         });

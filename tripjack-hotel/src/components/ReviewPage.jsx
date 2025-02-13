@@ -2941,13 +2941,14 @@ const ReviewPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const data = location.state?.data || null;
-
+console.log("reviewpage1",data);
   if (!data) {
     return <Typography variant="h6" align="center" sx={{ mt: 5 }}>No hotel data available</Typography>;
   }
  const queryData=data.query;
   const { hInfo, bookingId, conditions } = data;
   const { name, rt, ad, ops, tac, inst, pops } = hInfo;
+  console.log("po9ps",ops);
  const checkincheckout= data.query;
  console.log("not",checkincheckout);
   const handleBooking = (amount) => {
@@ -3006,16 +3007,16 @@ const ReviewPage = () => {
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{room.rc}</Typography>
                   <Typography variant="body2" color="textSecondary">{room.des}</Typography>
                   <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
-                    {pops.map((pop, idx) => (
+                    {/* {pops.map((pop, idx) => ( */}
                       <Button
-                        key={idx}
+                       
                         variant="contained"
                         sx={{ backgroundColor: primaryColor, color: "#fff" }}
-                        onClick={() => handleBooking(pop.tpc)}
-                      >
-                        {pop.fc.join(", ")} - ₹{pop.tpc.toLocaleString()}
+                        onClick={() => handleBooking(option.tp)}
+                      >{option.tp}
+                        {/* {pop.fc.join(", ")} - ₹{pop.tpc.toLocaleString()} */}
                       </Button>
-                    ))}
+                    {/* ))} */}
                   </Box>
                   {/* <Divider sx={{ my: 2 }} />
                   <Typography variant="body2">
@@ -3032,6 +3033,7 @@ const ReviewPage = () => {
                     </Box>
                   )} */}
                 </Grid>
+                
               </Grid>
             ))}
           </CardContent>

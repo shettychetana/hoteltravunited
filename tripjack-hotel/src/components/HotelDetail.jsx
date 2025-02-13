@@ -64,8 +64,8 @@ const handlePrev = () => {
 
 const navigateToReviewPage = async (hotelId, roomId) => {
   
-  const apiUrl = `https://tripjack.com/hms/v1/hotel-review`;
-  const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+  const apiUrl = `https://apitest.tripjack.com/hms/v1/hotel-review`;
+  const apiKey = '812106087da1ea-c4d9-4f3b-86a4-6d044a812964';
 
   const body = {
     hotelId: hotelId,
@@ -86,7 +86,7 @@ const navigateToReviewPage = async (hotelId, roomId) => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data); 
+      console.log("REVEIEW DATA",data); 
       navigate(`/review/${hotelId}/${roomId}`, { state: { data } });
     } else {
       console.error('Failed to submit review:', response.statusText);
