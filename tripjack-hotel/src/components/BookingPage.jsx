@@ -7,7 +7,7 @@ const primaryColor = "#FF6748";
 const BookingPage = () => {
 const location = useLocation();
 const navigate = useNavigate();
-const { bookingId, amount, checkincheckout } = location.state || {};
+const { bookingId, amount, checkincheckout,ops} = location.state || {};
 console.log("Booking ID:", bookingId);
 // Extract room information
 const roomInfo = checkincheckout?.roomInfo?.[0] || {};
@@ -67,11 +67,11 @@ requestBody,
 {
 headers: {
 "Content-Type": "application/json",
-"apikey": "812106087da1ea-c4d9-4f3b-86a4-6d044a812964",
+"apikey": "81210652be6625-ffb6-4457-8d7b-3b87bfa351c3",
 },
 }
 );
-navigate("/payment", { state: { hotelPayment: response.data } });
+navigate("/payment", { state: { hotelPayment: response.data ,bookingId, amount, checkincheckout,ops} });
 console.log("Booking Successful:", response.data);
 alert("Booking Confirmed!");
 } catch (error) {

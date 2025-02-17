@@ -65,7 +65,7 @@ const handlePrev = () => {
 const navigateToReviewPage = async (hotelId, roomId) => {
   
   const apiUrl = `https://apitest.tripjack.com/hms/v1/hotel-review`;
-  const apiKey = '812106087da1ea-c4d9-4f3b-86a4-6d044a812964';
+  const apiKey = '81210652be6625-ffb6-4457-8d7b-3b87bfa351c3';
 
   const body = {
     hotelId: hotelId,

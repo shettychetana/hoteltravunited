@@ -102,7 +102,7 @@ const HotelBookingForm = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            "apikey": "812106087da1ea-c4d9-4f3b-86a4-6d044a812964",
+            "apikey": "81210652be6625-ffb6-4457-8d7b-3b87bfa351c3",
           },
         }
       );
@@ -132,7 +132,7 @@ const HotelBookingForm = () => {
 
     //3api hotel search
     const fetchHotelSearch = async (searchId) => {
-      const apiKey = '610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172';
+      const apiKey = '81210652be6625-ffb6-4457-8d7b-3b87bfa351c3';
       const url = 'https://apitest.tripjack.com/hms/v1/hotel-search';
     
       try {
@@ -141,7 +141,7 @@ const HotelBookingForm = () => {
           headers: {
             'Content-Type': 'application/json',
             
-            'apikey': ` 812106087da1ea-c4d9-4f3b-86a4-6d044a812964`, 
+            'apikey': `81210652be6625-ffb6-4457-8d7b-3b87bfa351c3`, 
           },
           body: JSON.stringify({ searchId }),
         });
@@ -245,13 +245,13 @@ const updateChildAge = (roomIndex, childIndex, age) => {
 
     try {
       // Construct the API endpoint
-      const endpoint = `https://tripjack.com/hms/v1/static-cities/${next}`;
+      const endpoint = `https://apitest.tripjack.com/hms/v1/static-cities/${next}`;
       console.log("API endpoint:", endpoint); // Log the endpoint being hit
 
       const response = await axios.get(endpoint, {
         headers: {
           "Content-Type": "application/json",
-          apikey: "610720564f329c1c-ae91-4b19-b5b0-6083cb2fb172",
+          apikey: "81210652be6625-ffb6-4457-8d7b-3b87bfa351c3",
         },
       });
 

@@ -2952,7 +2952,7 @@ console.log("reviewpage1",data);
  const checkincheckout= data.query;
  console.log("not",checkincheckout);
   const handleBooking = (amount) => {
-    navigate("/booking", { state: { bookingId, amount,checkincheckout } });
+    navigate("/booking", { state: { bookingId, amount,checkincheckout ,ops} });
   };
 
   return (
@@ -3016,6 +3016,7 @@ console.log("reviewpage1",data);
                       >{option.tp}
                         {/* {pop.fc.join(", ")} - ₹{pop.tpc.toLocaleString()} */}
                       </Button>
+                      
                     {/* ))} */}
                   </Box>
                   {/* <Divider sx={{ my: 2 }} />

@@ -109,7 +109,7 @@ const ResultsPage = () => {
   const handleSelectRoom = async (hotelId) => {
     try {
       const apiUrl = "https://apitest.tripjack.com/hms/v1/hotelDetail-search";
-      const apiKey = "812106087da1ea-c4d9-4f3b-86a4-6d044a812964";
+      const apiKey = "81210652be6625-ffb6-4457-8d7b-3b87bfa351c3";
       const response = await axios.post(apiUrl, { id: hotelId }, {
         headers: { "Content-Type": "application/json", apikey: apiKey }
       });

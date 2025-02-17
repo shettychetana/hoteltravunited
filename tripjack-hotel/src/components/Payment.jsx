@@ -1,253 +1,259 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-// import { Container, Card, CardContent, Typography, Button, Box } from "@mui/material";
-// const primaryColor = "#FF6748";
-// const Payment = () => {
-// return (
-// <Container>
-// <Card sx={{ marginTop: 10 }}>
-// <CardContent>hy</CardContent>
-// </Card>
-// </Container>
-// );
-// };
-// export default Payment;
-// import React, { useEffect } from 'react';
-// import { createOrder } from '../services/razorpayService';
+
+// import axios from "axios";
+// import { useLocation } from "react-router-dom";
+// import React, { useEffect } from "react";
+// import { Card, CardContent, Typography, Button, Divider, Box } from "@mui/material";
+// import { LocationOn, CalendarToday, Person, CreditCard } from "@mui/icons-material";
 
 // const Payment = () => {
-//     const { hotelData, message } = location.state || {};
-//     const handlePayment = async () => {
-//         try {
-//             const orderData = await createOrder(500); // Amount in smallest currency unit (e.g., paise for INR)
-//             const options = {
-//                 key: process.env.REACT_APP_RAZORPAY_ID_KEY, // Your Razorpay key
-//                 amount: orderData.amount,
-//                 currency: orderData.currency,
-//                 name: "Your Company Name",
-//                 description: "Test Transaction",
-//                 order_id: orderData.id,
-//                 handler: function (response) {
-//                     alert(`Payment successful: ${response.razorpay_payment_id}`);
-//                 },
-//                 prefill: {
-//                     name: "Customer Name",
-//                     email: "customer@example.com",
-//                     contact: "9999999999"
-//                 },
-//                 notes: {
-//                     address: "Customer Address"
-//                 },
-//                 theme: {
-//                     color: "#F37254"
-//                 }
-//             };
+//   const location = useLocation(); 
+//   const { hotelPayment, bookingId, amount, checkincheckout ,ops} = location.state || {};
+//   console.log("Hotel Payment:", hotelPayment);
+//   console.log("Booking ID:", bookingId);
+//   console.log("Amount:", amount);
+//   console.log("Checkincheckout:", checkincheckout);
+//   console.log(" payment ops",ops);
+//   // Extract values from location.state
+//   //const { bookingId, amount, checkincheckout } = location.state || {}; 
+//   const { checkinDate, checkoutDate, searchCriteria, searchPreferences, roomInfo } = checkincheckout || {};
+//   const { cityName, countryName } = searchCriteria || {};
+//   const { currency } = searchPreferences || {};
+//   const { numberOfAdults, numberOfChild } = roomInfo?.[0] || {};
+//   console.log("Booking ID:", bookingId);
+//   console.log("Amount:", amount);
+//   console.log("Check-in & Check-out:", checkincheckout);
 
-//             const razorpay = new window.Razorpay(options);
-//             razorpay.open();
-//         } catch (error) {
-//             console.error("Payment failed:", error);
-//         }
-//     };
+//   useEffect(() => {
+//     const script = document.createElement("script");
+//     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+//     script.async = true;
+//     document.body.appendChild(script);
+//   }, []);
 
-//     useEffect(() => {
-//         const script = document.createElement('script');
-//         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-//         script.async = true;
-//         script.onload = handlePayment;
-//         document.body.appendChild(script);
-//     }, []);
+//   const handlePayment = async () => {
+//     // Make sure that amount is provided and is valid
+//     if (!amount || amount <= 0) {
+//       alert("Invalid payment amount. Please check your booking details.");
+//       return;
+//     }
 
-//     return (
+//     try {
+//       const { data } = await axios.post("http://localhost:5000/create-order", {
+//         amount: 1, // Convert amount to paisa for Razorpay
+//         bookingId: bookingId,
+//       });
+
+//       const options = {
+//         key: "rzp_live_COgMwy0zi5Mx1j", // Razorpay live key
+//         amount: data.amount, // This will be in paisa
+//         currency: "INR",
+//         order_id: data.id,
+//         name: "Travunited",
+//         description: `Booking ID: ${bookingId}`,
+//         image: "https://your-logo-url.com/logo.png",
+//         handler: function (response) {
+//           alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\nAmount Paid: ₹${amount}`);
+//         },
+//         prefill: {
+//           name: "Customer Name",
+//           email: "customer@example.com",
+//           contact: "9876543210",
+//         },
+//         theme: { color: "#FF6748" },
+//       };
+
+//       const razorpay = new window.Razorpay(options);
+//       razorpay.open();
+//     } catch (error) {
+//       console.error("Payment error:", error);
+//       alert("Payment failed. Please try again.");
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h2>Pay with Razorpay</h2>
+//       {amount && amount > 0 ? (
 //         <div>
-//             <h1>Payment Page</h1>
-//             <button onClick={handlePayment}>Pay Now</button>
+//           <p>Booking ID: {bookingId}</p>
+       
+         
+          
+//           <Card sx={{ maxWidth: 450, mx: "auto", p: 3, boxShadow: 3 }}>
+//       <Typography variant="h5" fontWeight="bold" gutterBottom>
+//         Confirm Your Booking
+//       </Typography>
+
+//       <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+//         {/* Location & Dates */}
+//         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+//           <LocationOn color="primary" />
+//           <Typography variant="body1" fontWeight="medium">
+//             {cityName}, {countryName}
+//           </Typography>
+//         </Box>
+//         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+//           <CalendarToday color="primary" />
+//           <Typography variant="body1">
+//             {checkinDate} - {checkoutDate}
+//           </Typography>
+//         </Box>
+
+//         {/* Guest Details */}
+//         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+//           <Person color="primary" />
+//           <Typography variant="body1">
+//             {numberOfAdults} Adults, {numberOfChild} Children
+//           </Typography>
+//         </Box>
+
+//         {/* Divider */}
+//         <Divider sx={{ my: 2 }} />
+
+//         {/* Payment Info */}
+//         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+//           <CreditCard color="primary" />
+//           <Typography variant="body1" fontWeight="bold">
+//             Total: {currency} {amount}
+//           </Typography>
+//         </Box>
+
+//         {/* Payment Button */}
+//         <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handlePayment}>
+        
+//           Proceed to Payment
+//         </Button>
+//       </CardContent>
+//     </Card>
 //         </div>
-//     );
+//       ) : (
+//         <p style={{ color: "red" }}>Invalid amount. Please check your booking.</p>
+//       )}
+//     </div>
+//   );
 // };
 
 // export default Payment;
-// import React, { useEffect } from 'react';
-// import { useLocation } from 'react-router-dom';
-// import { createOrder } from '../services/razorpayService';
-
-// const Payment = () => {
-//     const location = useLocation();
-//     const { hotelPayment } = location.state || {}; // Access the hotel payment data
-
-//     const handlePayment = async () => {
-//         try {
-//             const orderData = await createOrder(500); // Amount in smallest currency unit (e.g., paise for INR)
-//             const options = {
-//                 key: process.env.REACT_APP_RAZORPAY_ID_KEY, // Your Razorpay key
-//                 amount: orderData.amount,
-//                 currency: orderData.currency,
-//                 name: "Your Company Name",
-//                 description: "Test Transaction",
-//                 order_id: orderData.id,
-//                 handler: function (response) {
-//                     alert(`Payment successful: ${response.razorpay_payment_id}`);
-//                 },
-//                 prefill: {
-//                     name: "Customer Name",
-//                     email: "customer@example.com",
-//                     contact: "9999999999"
-//                 },
-//                 notes: {
-//                     address: "Customer Address"
-//                 },
-//                 theme: {
-//                     color: "#F37254"
-//                 }
-//             };
-
-//             const razorpay = new window.Razorpay(options);
-//             razorpay.open();
-//         } catch (error) {
-//             console.error("Payment failed:", error);
-//         }
-//     };
-
-//     useEffect(() => {
-//         const script = document.createElement('script');
-//         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-//         script.async = true;
-//         script.onload = handlePayment;
-//         document.body.appendChild(script);
-//     }, []);
-
-//     return (
-//         <div>
-//             <h1>Payment Page</h1>
-//             <button onClick={handlePayment}>Pay Now</button>
-//             {hotelPayment && (
-//                 <div>
-//                     <h2>Payment Details</h2>
-//                     <pre>{JSON.stringify(hotelPayment, null, 2)}</pre>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
-// export default Payment;
-import { useEffect } from "react";
 import axios from "axios";
-import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Card, CardContent, Typography, Button, Divider, Box } from "@mui/material";
+import { LocationOn, CalendarToday, Person, CreditCard } from "@mui/icons-material";
+
 const Payment = () => {
-  const [responseId, setResponseId] = React.useState("");
-  const [responseState, setResponseState] = React.useState([]);
+  const location = useLocation();
+  const navigate = useNavigate(); // Initialize navigation
+  const { hotelPayment, bookingId, amount, checkincheckout, ops } = location.state || {};
+  const { checkinDate, checkoutDate, searchCriteria, searchPreferences, roomInfo } = checkincheckout || {};
+  const { cityName, countryName } = searchCriteria || {};
+  const { currency } = searchPreferences || {};
+  const { numberOfAdults, numberOfChild } = roomInfo?.[0] || {};
 
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
-      script.src = src;
-
-      script.onload = () => {
-        resolve(true)
-      }
-      script.onerror = () => {
-        resolve(false)
-      }
-
-      document.body.appendChild(script);
-    })
-  }
-
-  const createRazorpayOrder = (amount) => {
-    let data = JSON.stringify({
-      amount: amount * 100,
-      currency: "INR"
-    })
-
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "http://localhost:3000/orders",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: data
-    }
-
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data))
-      handleRazorpayScreen(response.data.amount)
-    })
-    .catch((error) => {
-      console.log("error at", error)
-    })
-  }
-
-  const handleRazorpayScreen = async(amount) => {
-    const res = await loadScript("https:/checkout.razorpay.com/v1/checkout.js")
-
-    if (!res) {
-      alert("Some error at razorpay screen loading")
+  const handlePayment = async () => {
+    if (!amount || amount <= 0) {
+      alert("Invalid payment amount. Please check your booking details.");
       return;
     }
 
-    const options = {
-      key: 'rzp_test_GcZZFDPP0jHtC4',
-      amount: amount,
-      currency: 'INR',
-      name: "papaya coders",
-      description: "payment to papaya coders",
-      image: "https://papayacoders.com/demo.png",
-      handler: function (response){
-        setResponseId(response.razorpay_payment_id)
-      },
-      prefill: {
-        name: "papaya coders",
-        email: "papayacoders@gmail.com"
-      },
-      theme: {
-        color: "#F4C430"
-      }
+    try {
+      const { data } = await axios.post("http://localhost:5000/create-order", {
+        amount: 1, // Convert amount to paisa for Razorpay
+        bookingId: bookingId,
+      });
+
+      const options = {
+        key: "rzp_live_COgMwy0zi5Mx1j", // Razorpay live key
+        amount: data.amount, // This will be in paisa
+        currency: "INR",
+        order_id: data.id,
+        name: "Travunited",
+        description: `Booking ID: ${bookingId}`,
+        image: "https://your-logo-url.com/logo.png",
+        handler: function (response) {
+          alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\nAmount Paid: ₹${amount}`);
+
+          // Navigate to Booking Details page after payment success
+          navigate("/booking-details", { state: { bookingId, amount, checkincheckout, ops } });
+        },
+        prefill: {
+          name: "Customer Name",
+          email: "customer@example.com",
+          contact: "9876543210",
+        },
+        theme: { color: "#FF6748" },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Payment failed. Please try again.");
     }
+  };
 
-    const paymentObject = new window.Razorpay(options)
-    paymentObject.open()
-  }
-
-  const paymentFetch = (e) => {
-    e.preventDefault();
-
-    const paymentId = e.target.paymentId.value;
-
-    axios.get(`http://localhost:3000/payment/${paymentId}`)
-    .then((response) => {
-      console.log(response.data);
-      setResponseState(response.data)
-    })
-    .catch((error) => {
-      console.log("error occures", error)
-    })
-  }
-
- 
-
-  
   return (
     <div>
-      <h2>Razorpay Payment</h2>
-      <button onClick={() => createRazorpayOrder(100)}>Payment of 100Rs.</button>
-      {responseId && <p>{responseId}</p>}
-      <h1>This is payment verification form</h1>
-      <form onSubmit={paymentFetch}>
-        <input type="text" name="paymentId" />
-        <button type="submit">Fetch Payment</button>
-        {responseState.length !==0 && (
-          <ul>
-            <li>Amount: {responseState.amount / 100} Rs.</li>
-            <li>Currency: {responseState.currency}</li>
-            <li>Status: {responseState.status}</li>
-            <li>Method: {responseState.method}</li>
-          </ul>
-        )}
-      </form>
+      <h2>Pay with Razorpay</h2>
+      {amount && amount > 0 ? (
+        <div>
+          <p>Booking ID: {bookingId}</p>
+
+          <Card sx={{ maxWidth: 450, mx: "auto", p: 3, boxShadow: 3 }}>
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Confirm Your Booking
+            </Typography>
+
+            <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {/* Location & Dates */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <LocationOn color="primary" />
+                <Typography variant="body1" fontWeight="medium">
+                  {cityName}, {countryName}
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CalendarToday color="primary" />
+                <Typography variant="body1">
+                  {checkinDate} - {checkoutDate}
+                </Typography>
+              </Box>
+
+              {/* Guest Details */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Person color="primary" />
+                <Typography variant="body1">
+                  {numberOfAdults} Adults, {numberOfChild} Children
+                </Typography>
+              </Box>
+
+              {/* Divider */}
+              <Divider sx={{ my: 2 }} />
+
+              {/* Payment Info */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <CreditCard color="primary" />
+                <Typography variant="body1" fontWeight="bold">
+                  Total: {currency} {amount}
+                </Typography>
+              </Box>
+
+              {/* Payment Button */}
+              <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} onClick={handlePayment}>
+                Proceed to Payment
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <p style={{ color: "red" }}>Invalid amount. Please check your booking.</p>
+      )}
     </div>
   );
 };
