@@ -1,158 +1,66 @@
-// import { useLocation } from "react-router-dom";
-// import React from "react";
 
-// const BookingDetails = () => {
-//   const location = useLocation();
-//   const { bookingId, amount, checkincheckout, ops } = location.state || {};
-
-//   return (
-//     <div>
-//       <h2>Booking Details</h2>
-//       <p>Booking ID: {bookingId}</p>
-//       <p>Amount Paid: ₹{amount}</p>
-//       <p>Check-in: {checkincheckout?.checkinDate}</p>
-//       <p>Check-out: {checkincheckout?.checkoutDate}</p>
-//     </div>
-//   );
-// };
-
-// export default BookingDetails;
-// import { useLocation } from "react-router-dom";
-// import React, { useEffect, useState } from "react";
-
-// const BookingDetails = () => {
-//   const location = useLocation();
-//   const { bookingId } = location.state || {}; // Get bookingId from state
-//   const [bookingData, setBookingData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     if (!bookingId) {
-//       setError("No Booking ID provided.");
-//       setLoading(false);
-//       return;
-//     }
-
-//     const fetchBookingDetails = async () => {
-//       try {
-//         const response = await fetch("https://apitest.tripjack.com/oms/v1/hotel/booking-details", {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             "apikey":"81210652be6625-ffb6-4457-8d7b-3b87bfa351c3",
-//           },
-//           body: JSON.stringify({ bookingId }),
-//         });
-
-//         if (!response.ok) {
-//           throw new Error(`API Error: ${response.status}`);
-//         }
-
-//         const data = await response.json();
-//         console.log("Booking Details:", data);
-//         setBookingData(data);
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchBookingDetails();
-//   }, [bookingId]);
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p style={{ color: "red" }}>{error}</p>;
-//   if (!bookingData?.order) return <p>No booking details found.</p>;
-
-//   const { order, itemInfos } = bookingData;
-//   const hotelInfo = itemInfos?.HOTEL?.hInfo;
-//   const roomInfo = hotelInfo?.ops?.[0]?.ris?.[0];
-
-//   return (
-//     <div className="booking-details-container" style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-//       <h2 style={{ color: "#FF6748" }}>Booking Details</h2>
-//       <div className="booking-info" style={{ border: "1px solid #ddd", padding: "15px", borderRadius: "8px", backgroundColor: "#f9f9f9" }}>
-//         <p><strong>Booking ID:</strong> {order.bookingId}</p>
-//         <p><strong>Amount Paid:</strong> ₹{order.amount}</p>
-//         <p><strong>Status:</strong> {order.status}</p>
-//         <p><strong>Created On:</strong> {new Date(order.createdOn).toLocaleString()}</p>
-//         <p><strong>Contact Email:</strong> {order.deliveryInfo.emails?.[0]}</p>
-//         <p><strong>Contact Number:</strong> {order.deliveryInfo.contacts?.[0]}</p>
-//       </div>
-
-//       {hotelInfo && (
-//         <div className="hotel-info" style={{ marginTop: "20px" }}>
-//           <h3 style={{ color: "#FF6748" }}>Hotel Information</h3>
-//           <p><strong>Hotel Name:</strong> {hotelInfo.name}</p>
-//           <p><strong>Rating:</strong> {hotelInfo.rt} ⭐</p>
-//           <p><strong>Address:</strong> {hotelInfo.ad.adr}, {hotelInfo.ad.ctn}, {hotelInfo.ad.sn}, {hotelInfo.ad.cn}</p>
-//         </div>
-//       )}
-
-//       {roomInfo && (
-//         <div className="room-info" style={{ marginTop: "20px", padding: "15px", border: "1px solid #ddd", borderRadius: "8px", backgroundColor: "#f9f9f9" }}>
-//           <h3 style={{ color: "#FF6748" }}>Room Details</h3>
-//           <p><strong>Room Type:</strong> {roomInfo.rt}</p>
-//           <p><strong>Meal Basis:</strong> {roomInfo.mb}</p>
-//           <p><strong>Total Price:</strong> ₹{roomInfo.tp}</p>
-//           <p><strong>Bed Type:</strong> {roomInfo.radi.bds?.[0]?.bt}</p>
-//           <p><strong>Room Size:</strong> {roomInfo.radi.ar.asm} sqm ({roomInfo.radi.ar.asf} sqft)</p>
-//           <h4 style={{ color: "#FF6748" }}>Amenities</h4>
-//           <ul>
-//             {roomInfo.rexb?.BENEFIT?.[0]?.values.map((benefit, index) => (
-//               <li key={index}>{benefit}</li>
-//             ))}
-//           </ul>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default BookingDetails;
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import FlightLandIcon from '@mui/icons-material/FlightLand'
 import { 
   Container, 
-  Grid, 
   Card, 
-  CardContent, 
-  Typography, 
   Button, 
   Divider, 
-  Box, 
   CircularProgress,
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  useMediaQuery,
+ 
 } from "@mui/material";
-import {
-  CalendarToday as CalendarTodayIcon,
-  AccessTime as AccessTimeIcon,
-  Room as RoomIcon,
-  Download as DownloadIcon,
-  Star as StarIcon,
-  Hotel as HotelIcon,
-  Bed as BedIcon,
-  Restaurant as RestaurantIcon,
-  Wifi as WifiIcon,
-  LocalParking as ParkingIcon
-} from "@mui/icons-material";
-
-
+import CardContent from "@mui/material/CardContent";
+ import StarIcon from "@mui/icons-material/Star";
+import RoomIcon from "@mui/icons-material/Room";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import BedIcon from "@mui/icons-material/Bed";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import HotelIcon from "@mui/icons-material/Hotel";
+import { useNavigate } from "react-router-dom";
+import WifiIcon from "@mui/icons-material/Wifi";
+import DownloadIcon from "@mui/icons-material/Download";
+import { Typography, Grid, Avatar, Box } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+const bookingData = {
+  customerName: 'Chetana Shetty',
+  customerImage: 'https://via.placeholder.com/150',
+  checkInDate: 'Thur, Dec 8',
+  checkOutDate: 'Fri, Dec 9',
+  nights: '1 Night',
+  checkInTime: '12:00pm',
+  checkOutTime: '11:30pm',
+  roomType: 'Superior room - 1 double bed or 2 twin beds',
+  roomNumber: 'On arrival',
+  bookingId: 'TJS208001316188',
+  hotelLogo: 'https://via.placeholder.com/100',
+  hotelName: 'Lemon Tree Hotels'
+};
 const BookingDetails = () => {
+  const isMobile = useMediaQuery("(max-width:600px)");
   const location = useLocation();
   const { bookingId } = location.state || {};
   const [bookingData, setBookingData] = useState(null);
   const [hotelInfo, setHotelInfo] = useState(null);
   const [roomInfo, setRoomInfo] = useState(null);
-
+  const [queryInfo, setQueryInfo] = useState(null);
+  const [orderInfo, setOrderInfo] = useState(null);
+const [priceInfo, setPriceInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+ 
+  const checkinDate = new Date(queryInfo?.checkinDate);
+const checkoutDate = new Date(queryInfo?.checkoutDate);
 
+// Calculate difference in days
+const dayDifference = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
   useEffect(() => {
     if (!bookingId) {
       setError("No Booking ID provided.");
@@ -176,10 +84,13 @@ const BookingDetails = () => {
         }
 
         const data = await response.json();
+        console.log("Booking Details:", data);
         setBookingData(data.order);
         setHotelInfo(data.itemInfos?.HOTEL?.hInfo);
         setRoomInfo(data.itemInfos?.HOTEL?.hInfo?.ops?.[0]?.ris?.[0]);
-
+        setPriceInfo(data.itemInfos?.HOTEL?.hInfo?.ops?.[0]);
+        setQueryInfo(data.itemInfos?.HOTEL?.query);
+        setOrderInfo(data.order);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -214,71 +125,104 @@ const BookingDetails = () => {
 
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth="lg">
+       
       {/* Hotel Information Section */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h4" sx={{ color: '#1976d2' }} fontWeight="bold">
-
-              {hotelInfo?.name}
-              <Box component="span" sx={{ ml: 1 }}>
-                {Array.from({ length: hotelInfo?.rt || 0 }).map((_, i) => (
-                  <StarIcon key={i} fontSize="small" color="secondary" />
-                ))}
-              </Box>
-            </Typography>
-            <Typography variant="h5" color="secondary">
-              ₹ {bookingData.amount}
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 3 }}>
+      <Card sx={{ display: "flex", flexDirection: isMobile ? "column" : "row", borderRadius: 3, overflow: "hidden", maxWidth: 1200, width: "100%" }}>
+        
+        <Box sx={{ backgroundColor: "#E8F4FA", padding: 2, minWidth: isMobile ? "100%" : 150, textAlign: "center" }}>
+          <Typography variant="h6" fontWeight="bold">
+          {queryInfo?.checkinDate || "N/A"}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+          Check-In
+          </Typography>
+          <Box
+            sx={{ backgroundColor: "white", display: "inline-block", padding: "4px 12px", borderRadius: 2, mt: 1 }}
+          >
+            <Typography variant="body2" fontWeight="bold">  {dayDifference > 0 ? `${dayDifference} Nights` : "Invalid Dates"}
             </Typography>
           </Box>
-          
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            <RoomIcon fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }} />
-            {hotelInfo?.ad?.adr}, {hotelInfo?.ad?.ctn}, {hotelInfo?.ad?.sn}, {hotelInfo?.ad?.cn}
+          <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
+          {queryInfo?.checkoutDate || "N/A"}
           </Typography>
-          
-          <Divider sx={{ my: 2 }} />
-          
-          {/* Check-In/Check-Out Section */}
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Card sx={{ bgcolor: '#FF6748', color: 'white' }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Check-In
-                  </Typography>
-                  <Typography>
-                    <CalendarTodayIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                    {roomInfo?.checkInDate}
-                  </Typography>
-                  <Typography>
-                    <AccessTimeIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                    {roomInfo?.checkInTime}
-                  </Typography>
-                </CardContent>
-              </Card>
+          <Typography variant="body2" color="textSecondary">
+            Check-Out 
+          </Typography>
+        </Box>
+
+        {/* Middle Section */}
+        <Box sx={{ flex: 1, p: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", backgroundColor: "#F56A57", color: "white", p: 1, borderRadius: 2 }}>
+            <Avatar src="https://via.placeholder.com/40" sx={{ width: 40, height: 40, mr: 1 }} />
+            <Typography fontWeight="bold">{roomInfo?.ti[0].fN} {roomInfo?.ti[0].lN}</Typography>
+          </Box>
+          <Typography variant="body2" sx={{ mt: 1, color: "#F56A57", fontWeight: "bold" }}>
+            {roomInfo?.rc || "N/A"}
+          </Typography>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={12} sm={4} sx={{ display: "flex", alignItems: "center" }}>
+              <AccessTimeIcon color="error" sx={{ mr: 1 }} />
+              <Typography variant="body2">Check-in time <strong>12:00pm</strong></Typography>
             </Grid>
-            
-            <Grid item xs={12} md={6}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Check-Out
-                  </Typography>
-                  <Typography>
-                    <CalendarTodayIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                    {roomInfo?.checkOutDate}
-                  </Typography>
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    Booking ID: {bookingData.bookingId}
-                  </Typography>
-                </CardContent>
-              </Card>
+            <Grid item xs={12} sm={4} sx={{ display: "flex", alignItems: "center" }}>
+              <AccessTimeIcon color="error" sx={{ mr: 1 }} />
+              <Typography variant="body2">Check-out time <strong>11:30pm</strong></Typography>
+            </Grid>
+            <Grid item xs={12} sm={4} sx={{ display: "flex", alignItems: "center" }}>
+              <MeetingRoomIcon color="error" sx={{ mr: 1 }} />
+              <Typography variant="body2">Room no. <strong>On arrival</strong></Typography>
             </Grid>
           </Grid>
-        </CardContent>
+          <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
+          {priceInfo.sc} {priceInfo.tp}
+          </Typography>
+          {/* <Typography variant="body2" color="textSecondary">
+            {roomInfo.sc}{roomInfo.tp}
+          </Typography> */}
+        </Box>
+
+        {/* Right Section */}
+        <Box 
+  sx={{ 
+    display: "flex", 
+    flexDirection: "column",
+    alignItems: "center", 
+    justifyContent: "center", 
+    p: 2, 
+    boxShadow: 3, 
+    backgroundColor: "white", 
+    borderRadius: 2 
+  }}
+>
+  <Typography 
+    variant="h4" 
+    sx={{ 
+      fontWeight: "bold", 
+      color: "#6BA843", // Green color similar to the logo
+      textTransform: "lowercase",
+      fontFamily: "'Arial', sans-serif"
+    }}
+  >
+    {hotelInfo.name} 
+    {/* <span style={{ color: "#FDC82F" }}>tree</span> */}
+  </Typography>
+  <Typography 
+    variant="subtitle2" 
+    sx={{ 
+      letterSpacing: 2, 
+      color: "#FDC82F",
+      fontWeight: "bold",
+      fontSize: "12px"
+    }}
+  >
+    HOTELS
+  </Typography>
+</Box>
+
       </Card>
+    </Box>
 
       {/* Room Details Section */}
       {roomInfo && (
@@ -376,9 +320,10 @@ const BookingDetails = () => {
           Download Booking Details
         </Button>
       </Box>
+      
     </Container>
-
   );
+    
 };
 
 export default BookingDetails;

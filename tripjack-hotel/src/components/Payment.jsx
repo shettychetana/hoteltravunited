@@ -170,6 +170,7 @@ const Payment = () => {
 
       const options = {
         key: "rzp_live_COgMwy0zi5Mx1j", // Razorpay live key
+        //key: process.env.REACT_APP_RAZORPAY_KEY_ID, 
         amount: data.amount, // This will be in paisa
         currency: "INR",
         order_id: data.id,
