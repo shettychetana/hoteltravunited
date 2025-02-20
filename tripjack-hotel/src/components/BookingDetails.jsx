@@ -310,42 +310,56 @@ const dayDifference = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 *
       </Card>
 
       {/* Download Button */}
-      <Box textAlign="center" mt={3}>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          startIcon={<DownloadIcon />}
-        >
-          Download Booking Details
-        </Button>
-      </Box>
-      <div className="max-w-4xl mx-auto p-6 border rounded-lg shadow-md bg-white">
-      <h2 className="text-2xl font-bold mb-4">Terms and Conditions</h2>
       
-      <h3 className="text-xl font-semibold mt-4">Payments</h3>
-      <ul className="list-disc pl-6 mt-2 space-y-2">
-        <li>
+      
+      
+      <Box 
+      sx={{ 
+       
+        margin: "auto", 
+        padding: "20px", 
+        border: "1px solid #d1d1d1", 
+        borderRadius: "8px",
+        lineHeight: "1.6",
+        marginTop: "20px",
+      }}
+    >
+      {/* Terms and Conditions Title */}
+      <Typography variant="h5" fontWeight="bold" gutterBottom>
+        Terms and Conditions
+      </Typography>
+
+      {/* Payments Section */}
+      <Typography variant="h6" fontWeight="bold" mt={2}>
+        Payments
+      </Typography>
+      <List sx={{ paddingLeft: "16px" }}>
+        <ListItem sx={{ display: "list-item" }}>
           If you are purchasing your ticket using a debit or credit card via the Website, we will process these payments via the automated secure common payment gateway which will be subject to fraud screening purposes.
-        </li>
-        <li>
-          If you do not supply the correct card billing address and/or cardholder information, your booking will not be confirmed and the overall cost may increase. We reserve the right to cancel your booking if payment is declined for any reason or if you have supplied incorrect card information. If we become aware of, or are notified of, any fraud or illegal activity associated with the payment for the booking, the booking will be cancelled and you will be liable for all costs and expenses arising from such cancellation, without prejudice to any action that may be taken against us.
-        </li>
-        <li>
-          Golobe may require the cardholder to provide additional payment verification upon request by either submitting an online form or visiting the nearest Golobe office, or at the airport at the time of check-in. Golobe reserves the right to deny boarding or to collect a guarantee payment (in cash or from another credit card) if the card originally used for the purchase cannot be presented by the cardholder at check-in or when collecting the tickets, or in the case the original payment has been withheld or disputed by the card issuing bank. Credit card details are held in a secured environment and transferred through an internationally accepted system.
-        </li>
-      </ul>
-      
-      <h3 className="text-xl font-semibold mt-6">Contact Us</h3>
-      <p className="mt-2">
+        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>
+          If you do not supply the correct card billing address and/or cardholder information, your booking will not be confirmed and the overall cost may increase. We reserve the right to cancel your booking if payment is declined for any reason or if you have supplied incorrect card information.
+        </ListItem>
+        <ListItem sx={{ display: "list-item" }}>
+          Golobe may require the cardholder to provide additional payment verification upon request by either submitting an online form or visiting the nearest Golobe office at the time of check-in.
+        </ListItem>
+      </List>
+
+      {/* Contact Us Section */}
+      <Typography variant="h6" fontWeight="bold" mt={3}>
+        Contact Us
+      </Typography>
+      <Typography variant="body1">
         If you have any questions about our Website or our Terms of Use, please contact:
-      </p>
-      <p className="mt-2 font-semibold">Travunited Group Q.C.S.C</p>
-      <p>Travunited Tower</p>
-      <p>P.O. Box: 576102</p>
-      <p>Udupi, Karnataka</p>
-      <p className="mt-2">Further contact details can be found at Travunited.com</p>
-    </div>
+      </Typography>
+      <Typography variant="body1" mt={1}>
+        <strong>Travunited Group Q.C.S.C</strong> <br />
+        Travunited Tower <br />
+        P.O. Box: 576102 <br />
+        Udupi, Karnataka <br />
+        Further contact details can be found at Travunited.com
+      </Typography>
+    </Box>
     </Container>
   );
     

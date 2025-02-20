@@ -164,7 +164,7 @@ const Payment = () => {
 
     try {
       const { data } = await axios.post("http://localhost:5000/create-order", {
-        amount: 1, // Convert amount to paisa for Razorpay
+        amount:amount, // Convert amount to paisa for Razorpay
         bookingId: bookingId,
       });
 

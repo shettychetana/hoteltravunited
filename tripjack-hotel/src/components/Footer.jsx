@@ -20,7 +20,7 @@ const Footer = () => {
            related services around the globe such as Air Tickets, Holiday Packages, 
            Tour Packages, Hajj & Umrah Packages, Visa & Passport, Travel Insurance etc
           </Typography>
-          <button>j</button>
+          
           <Box mt={2}>
             <IconButton>
               <Twitter />
